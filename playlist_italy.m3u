@@ -34,7 +34,7 @@ https://mediapolis.rai.it/relinker/relinkerServlet.htm?cont=747002&output=7&forc
 https://d3k8wzt41aflvx.cloudfront.net/RaiPremium/Live.m3u8
 #EXTINF:-1 tvg-id="cielo.it" tvg-name="Cielo" tvg-logo="https://i.imgur.com/cPluF03.png" group-title="Italy",Cielo Ⓖ
 https://hlslive-web-gcdn-skycdn-it.akamaized.net/TACT/11219/cieloweb/master.m3u8?hdnts=st=1764666351~exp=1829466206~acl=/%2A~hmac=b0e9165b6c55027903ad103c8219f363d8765eb300c0d9a339e9767fc3509556
-#EXTINF:-1 tvg-id="27Twentyseven.it" tvg-name="27 Twentyseven" tvg-logo="https://i.imgur.com/y2PdPCK.png" group-title="Italy",27 Twentyseven Ⓖ
+#EXTINF:-1 tvg-id="27Twentyseven.it" tvg-name="27 Twentyseven" tvg-logo="https://api.superguidatv.it/v1/channels/601/logo?width=120&theme=dark" group-title="Italy",27 Twentyseven Ⓖ
 https://live02-seg.msf.cdn.mediaset.net/live/ch-ts/ts-clr.isml/index.m3u8
 #EXTINF:-1 tvg-id="TV2000.va" tvg-name="TV 2000" tvg-logo="https://i.imgur.com/x7RaK3a.png" group-title="Italy",TV 2000
 https://hls-live-tv2000.akamaized.net/hls/live/2028510/tv2000/master.m3u8
@@ -88,8 +88,6 @@ https://mediapolis.rai.it/relinker/relinkerServlet.htm?cont=358025&output=7&forc
 https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/TURBO/CMAF/index.m3u8
 #EXTINF:-1 tvg-id="Radio105TV.it" tvg-name="Radio 105 TV" tvg-logo="https://i.imgur.com/3NiLKvj.png" group-title="Italy",Radio 105 TV Ⓖ
 https://live02-seg.msr.cdn.mediaset.net/live/ch-ec/ec-clr.isml/index.m3u8
-#EXTINF:-1 tvg-id="R101TV.it" tvg-name="R101 TV" tvg-logo="https://i.imgur.com/mWeEa9T.png" group-title="Italy",R101 TV Ⓖ
-https://live02-seg.msr.cdn.mediaset.net/live/ch-er/er-clr.isml/index.m3u8
 #EXTINF:-1 tvg-id="DeejayTV.it" tvg-name="Deejay TV" tvg-logo="https://i.imgur.com/rlaKH6k.png" group-title="Italy",Deejay TV
 https://4c4b867c89244861ac216426883d1ad0.msvdn.net/live/S85984808/sMO0tz9Sr2Rk/playlist.m3u8
 #EXTINF:-1 tvg-id="RadioItaliaTV.it" tvg-name="RadioItaliaTV" tvg-logo="https://i.imgur.com/4VCEJuJ.png" group-title="Italy",RadioItaliaTV
