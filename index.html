@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>IPTV</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
@@ -10,50 +10,56 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #0f0f13; color: #fff; min-height: 100vh; overflow-x: hidden;
+    /* Safe area per CarPlay: evita la barra icone sotto */
+    padding-bottom: env(safe-area-inset-bottom, 60px);
   }
 
+  /* TOP BAR - compatta per CarPlay */
   .top-bar {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 14px; background: #111;
+    padding: 8px 12px; background: #111;
     border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 50;
-    gap: 10px; flex-wrap: wrap;
+    gap: 8px; flex-wrap: wrap;
+    min-height: 48px;
   }
-  .top-bar .title { font-size: 16px; font-weight: 700; }
+  .top-bar .title { font-size: 15px; font-weight: 700; }
   .gps-info {
-    display: none; align-items: center; gap: 20px;
+    display: none; align-items: center; gap: 14px;
     background: #1a1a22; border: 1px solid #2a2a35;
-    padding: 10px 18px; border-radius: 12px; white-space: nowrap;
+    padding: 6px 14px; border-radius: 10px; white-space: nowrap;
   }
   .gps-info.visible { display: flex; }
-  .gps-item { display: flex; align-items: center; gap: 6px; }
-  .gps-item .icon { font-size: 32px; }
-  .gps-item .val { font-weight: 800; font-size: 32px; line-height: 1; }
-  .gps-item .lbl { color: #888; font-size: 16px; }
+  .gps-item { display: flex; align-items: center; gap: 5px; }
+  .gps-item .icon { font-size: 22px; }
+  .gps-item .val { font-weight: 800; font-size: 22px; line-height: 1; }
+  .gps-item .lbl { color: #888; font-size: 13px; }
 
   .weather-info {
-    display: none; align-items: center; gap: 8px;
+    display: none; align-items: center; gap: 6px;
     background: #1a1a22; border: 1px solid #2a2a35;
-    padding: 10px 18px; border-radius: 12px; white-space: nowrap;
+    padding: 6px 12px; border-radius: 10px; white-space: nowrap;
   }
   .weather-info.visible { display: flex; }
-  .weather-info .w-icon { font-size: 32px; }
-  .weather-info .w-temp { font-weight: 800; font-size: 32px; }
+  .weather-info .w-icon { font-size: 22px; }
+  .weather-info .w-temp { font-weight: 800; font-size: 22px; }
 
   .icon-btn {
     background: #2a2a35; border: none; color: #fff;
-    padding: 10px 16px; border-radius: 10px;
-    font-size: 14px; font-weight: 600; cursor: pointer;
+    padding: 8px 14px; border-radius: 10px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    white-space: nowrap;
   }
   .icon-btn:hover { background: #3a3a48; }
   .view-btn {
     background: #4a7dff; border: none; color: #fff;
-    padding: 10px 18px; border-radius: 10px;
-    font-size: 14px; font-weight: 600; cursor: pointer;
+    padding: 8px 16px; border-radius: 10px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    white-space: nowrap;
   }
   .view-btn:hover { background: #3a6bef; }
   .view-btn.active { background: #ff9800; }
 
-  #status { text-align: center; padding: 8px; font-size: 12px; color: #aaa; }
+  #status { text-align: center; padding: 6px; font-size: 12px; color: #aaa; }
   #status.error { color: #ff5555; }
   #status.success { color: #4ade80; }
 
@@ -118,54 +124,58 @@
   button.action:disabled { background: #333; cursor: not-allowed; }
 
   .gps-overlay {
-    position: absolute; top: 16px; left: 50%;
+    position: absolute; top: 12px; left: 50%;
     transform: translateX(-50%);
-    display: none; align-items: center; gap: 20px;
+    display: none; align-items: center; gap: 16px;
     background: rgba(0,0,0,0.75);
     border: 1px solid rgba(255,255,255,0.15);
-    padding: 10px 22px; border-radius: 14px;
+    padding: 8px 18px; border-radius: 12px;
     z-index: 20; pointer-events: none; backdrop-filter: blur(6px);
   }
   .gps-overlay.visible { display: flex; }
-  .gps-overlay .gps-item { display: flex; align-items: center; gap: 6px; }
-  .gps-overlay .gps-item .icon { font-size: 28px; }
-  .gps-overlay .gps-item .val { font-weight: 800; font-size: 28px; line-height: 1; }
-  .gps-overlay .gps-item .lbl { color: #bbb; font-size: 14px; }
+  .gps-overlay .gps-item { display: flex; align-items: center; gap: 5px; }
+  .gps-overlay .gps-item .icon { font-size: 24px; }
+  .gps-overlay .gps-item .val { font-weight: 800; font-size: 24px; line-height: 1; }
+  .gps-overlay .gps-item .lbl { color: #bbb; font-size: 12px; }
 
   .modal {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.95); z-index: 2000;
     flex-direction: column;
+    /* Padding inferiore per CarPlay: safe area */
+    padding-bottom: env(safe-area-inset-bottom, 50px);
   }
   .modal.visible { display: flex; }
   .modal-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 18px; background: #111;
-    border-bottom: 1px solid #222; flex-wrap: wrap; gap: 10px;
+    padding: 10px 16px; background: #111;
+    border-bottom: 1px solid #222; flex-wrap: wrap; gap: 8px;
+    min-height: 50px;
+    flex-shrink: 0;
   }
-  .modal-header .modal-title { font-size: 16px; font-weight: 700; }
+  .modal-header .modal-title { font-size: 15px; font-weight: 700; }
   .modal-header .header-actions { display: flex; gap: 8px; align-items: center; }
   .btn-calibra {
     background: #ff9800; border: none; color: #fff;
-    padding: 10px 18px; border-radius: 10px;
-    font-size: 14px; font-weight: 700; cursor: pointer;
+    padding: 8px 16px; border-radius: 10px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
   }
   .btn-calibra:hover { background: #e68900; }
   .btn-calibra.active { background: #2a5acf; }
   .close-modal {
     background: #2a2a35; border: none; color: #fff;
-    width: 40px; height: 40px; border-radius: 10px;
-    font-size: 20px; cursor: pointer;
+    width: 36px; height: 36px; border-radius: 10px;
+    font-size: 18px; cursor: pointer;
   }
-  .modal-body { flex: 1; overflow: auto; }
+  .modal-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
   .modal-body iframe { width: 100%; height: 100%; border: 0; }
 
-  /* ============ COCKPIT / STRUMENTAZIONE AEREO ============ */
+  /* ============ COCKPIT - OTTIMIZZATO CARPLAY ============ */
   .cockpit {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    padding: 16px;
+    gap: 10px;
+    padding: 12px;
     background: #0a0a10;
     border-bottom: 1px solid #222;
   }
@@ -187,6 +197,9 @@
     position: relative;
     overflow: hidden;
     box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(74,125,255,0.1);
+    max-width: 260px;
+    margin: 0 auto;
+    width: 100%;
   }
   .instrument canvas {
     width: 100%; height: 100%;
@@ -194,141 +207,112 @@
   }
   .instrument-label {
     text-align: center;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: #4a7dff;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    margin-top: 6px;
+    margin-top: 4px;
   }
   .instrument-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-
-  /* G-Force rettangolare */
   .instrument.gforce {
     border-radius: 16px;
-    aspect-ratio: 1;
   }
 
-  /* ============ INFO GRID SOTTO ============ */
-  .telem-section-title {
-    color: #4a7dff; font-size: 13px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 1px;
-    text-align: center; margin-top: 20px; margin-bottom: 4px;
-  }
+  /* ============ INFO GRID ============ */
   .telem-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 12px;
-    padding: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    padding: 14px;
   }
   .telem-card {
     background: #1a1a22;
     border: 1px solid #2a2a35;
-    border-radius: 14px;
-    padding: 18px;
+    border-radius: 12px;
+    padding: 14px;
     text-align: center;
   }
-  .telem-card .telem-icon { font-size: 36px; margin-bottom: 8px; }
+  .telem-card .telem-icon { font-size: 28px; margin-bottom: 6px; }
   .telem-card .telem-value {
-    font-size: 32px; font-weight: 800; line-height: 1;
+    font-size: 26px; font-weight: 800; line-height: 1;
     color: #4a7dff;
   }
-  .telem-card .telem-unit { font-size: 14px; color: #888; margin-left: 4px; }
+  .telem-card .telem-unit { font-size: 13px; color: #888; margin-left: 3px; }
   .telem-card .telem-label {
-    font-size: 12px; color: #888; margin-top: 6px;
+    font-size: 11px; color: #888; margin-top: 5px;
     text-transform: uppercase; letter-spacing: 0.5px;
   }
-  .telem-card.disabled { opacity: 0.35; }
-  .telem-card.disabled .telem-value { color: #555; }
-
-  /* INCLINOMETRO sotto (semplice) */
-  .incline-wrap {
-    display: flex; justify-content: center; padding: 20px;
-  }
-  .incline-viz {
-    width: 200px; height: 200px; border-radius: 50%;
-    background: #1a1a22; border: 2px solid #2a2a35;
-    position: relative; overflow: hidden;
-  }
-  .incline-bubble {
-    width: 40px; height: 40px; background: #4a7dff;
-    border-radius: 50%; position: absolute;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-    transition: transform 0.1s ease-out;
-    box-shadow: 0 0 20px rgba(74,125,255,0.6);
-  }
-  .incline-crosshair { position: absolute; background: #2a2a35; }
-  .incline-crosshair.h { width: 100%; height: 1px; top: 50%; }
-  .incline-crosshair.v { height: 100%; width: 1px; left: 50%; }
 
   /* PLAYER */
   #playerOverlay {
     display: none; position: fixed; inset: 0;
     background: #000; z-index: 1000; flex-direction: column;
+    padding-bottom: env(safe-area-inset-bottom, 40px);
   }
   #playerOverlay.visible { display: flex; }
   .player-header {
     display: flex; align-items: center; gap: 16px;
-    padding: 18px 22px; background: #111;
-    border-bottom: 1px solid #222; min-height: 84px; flex-shrink: 0;
+    padding: 16px 20px; background: #111;
+    border-bottom: 1px solid #222; min-height: 76px; flex-shrink: 0;
   }
   .player-header .info { flex: 1; min-width: 0; }
   .player-header .title {
-    font-size: 22px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .player-header .group { font-size: 14px; color: #888; margin-top: 3px; }
+  .player-header .group { font-size: 13px; color: #888; margin-top: 3px; }
   .hdr-btn {
     background: #2a2a35; border: none; color: #fff;
-    width: 58px; height: 58px; border-radius: 14px;
-    font-size: 26px; cursor: pointer;
+    width: 54px; height: 54px; border-radius: 14px;
+    font-size: 24px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
   .hdr-btn:hover { background: #3a3a48; }
-  .close-btn { font-size: 30px; }
+  .close-btn { font-size: 28px; }
 
   .player-body { flex: 1; display: flex; min-height: 0; position: relative; }
   .video-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: #000; position: relative; }
   video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
   #channelMenu {
-    width: 420px; background: #111; border-left: 1px solid #222;
+    width: 400px; background: #111; border-left: 1px solid #222;
     display: flex; flex-direction: column;
     transform: translateX(100%); transition: transform 0.25s ease;
     position: absolute; right: 0; top: 0; bottom: 0; z-index: 30;
   }
   #channelMenu.visible { transform: translateX(0); }
   .menu-header {
-    padding: 14px 16px; border-bottom: 1px solid #222;
+    padding: 12px 14px; border-bottom: 1px solid #222;
     display: flex; align-items: center; justify-content: space-between;
     flex-shrink: 0;
   }
-  .menu-header .menu-title { font-size: 15px; font-weight: 700; }
+  .menu-header .menu-title { font-size: 14px; font-weight: 700; }
   .close-menu {
     background: #2a2a35; border: none; color: #fff;
-    width: 34px; height: 34px; border-radius: 8px;
-    font-size: 18px; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 8px;
+    font-size: 16px; cursor: pointer;
   }
   .menu-list { flex: 1; overflow-y: auto; padding: 6px; }
   .menu-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 10px; border-radius: 8px; cursor: pointer;
+    padding: 8px; border-radius: 8px; cursor: pointer;
     transition: background 0.15s; border: 1px solid transparent;
   }
   .menu-item:hover { background: #1f1f2b; }
   .menu-item.active { background: #1a2340; border-color: #4a7dff; }
   .menu-item img {
-    width: 60px; height: 46px; object-fit: contain;
+    width: 56px; height: 42px; object-fit: contain;
     background: #fff; border-radius: 5px; padding: 3px; flex-shrink: 0;
   }
   .menu-info { flex: 1; min-width: 0; }
   .menu-name {
-    font-size: 14px; font-weight: 600; white-space: nowrap;
+    font-size: 13px; font-weight: 600; white-space: nowrap;
     overflow: hidden; text-overflow: ellipsis;
   }
   .menu-item.active .menu-name { color: #4a7dff; }
@@ -336,7 +320,7 @@
   .menu-list::-webkit-scrollbar { width: 6px; }
   .menu-list::-webkit-scrollbar-thumb { background: #2a2a35; border-radius: 3px; }
 
-  @media (max-width: 700px) { #channelMenu { width: 300px; } }
+  @media (max-width: 700px) { #channelMenu { width: 280px; } }
 </style>
 </head>
 <body>
@@ -390,9 +374,8 @@
   </div>
   <div class="modal-body">
 
-    <!-- COCKPIT: 4 strumenti principali in orizzontale -->
+    <!-- COCKPIT: 4 strumenti -->
     <div class="cockpit">
-      <!-- ORIZZONTE ARTIFICIALE -->
       <div class="instrument-wrap">
         <div class="instrument">
           <canvas id="horizonCanvas" width="300" height="300"></canvas>
@@ -400,7 +383,6 @@
         <div class="instrument-label">Orizzonte</div>
       </div>
 
-      <!-- BUSSOLA STILE AEREO (HSI) -->
       <div class="instrument-wrap">
         <div class="instrument">
           <canvas id="compassCanvas" width="300" height="300"></canvas>
@@ -408,7 +390,6 @@
         <div class="instrument-label">Bussola</div>
       </div>
 
-      <!-- ALTIMETRO CON FRECCIA -->
       <div class="instrument-wrap">
         <div class="instrument">
           <canvas id="altimeterCanvas" width="300" height="300"></canvas>
@@ -416,7 +397,6 @@
         <div class="instrument-label">Altimetro</div>
       </div>
 
-      <!-- G-FORCE -->
       <div class="instrument-wrap">
         <div class="instrument gforce">
           <canvas id="gforceCanvas" width="300" height="300"></canvas>
@@ -429,7 +409,7 @@
     <div class="telem-grid">
       <div class="telem-card">
         <div class="telem-icon">✈️</div>
-        <div class="telem-value" id="tPitchRoll" style="font-size:22px">0° / 0°</div>
+        <div class="telem-value" id="tPitchRoll" style="font-size:20px">0° / 0°</div>
         <div class="telem-label">Pitch / Roll</div>
       </div>
       <div class="telem-card">
@@ -442,14 +422,14 @@
         <div class="telem-value" id="tAlt2">--<span class="telem-unit">m</span></div>
         <div class="telem-label">Quota</div>
       </div>
-      <div class="telem-card" id="tClimbCard">
+      <div class="telem-card">
         <div class="telem-icon">↕️</div>
-        <div class="telem-value" id="tClimb" style="font-size:22px">0.0<span class="telem-unit">m/s</span></div>
+        <div class="telem-value" id="tClimb" style="font-size:20px">0.0<span class="telem-unit">m/s</span></div>
         <div class="telem-label">Velocità Verticale</div>
       </div>
       <div class="telem-card">
         <div class="telem-icon">💥</div>
-        <div class="telem-value" id="tGForce" style="font-size:22px">0.00<span class="telem-unit">g</span></div>
+        <div class="telem-value" id="tGForce" style="font-size:20px">0.00<span class="telem-unit">g</span></div>
         <div class="telem-label">Forza G Totale</div>
       </div>
       <div class="telem-card">
@@ -464,39 +444,15 @@
       </div>
       <div class="telem-card">
         <div class="telem-icon">📍</div>
-        <div class="telem-value" id="tLat" style="font-size:16px">--</div>
+        <div class="telem-value" id="tLat" style="font-size:15px">--</div>
         <div class="telem-label">Latitudine</div>
       </div>
       <div class="telem-card">
         <div class="telem-icon">📍</div>
-        <div class="telem-value" id="tLon" style="font-size:16px">--</div>
+        <div class="telem-value" id="tLon" style="font-size:15px">--</div>
         <div class="telem-label">Longitudine</div>
       </div>
-      <div class="telem-card" id="cardBattery">
-        <div class="telem-icon">🔋</div>
-        <div class="telem-value" id="tBattery">--<span class="telem-unit">%</span></div>
-        <div class="telem-label">Batteria</div>
-      </div>
-      <div class="telem-card" id="cardNetwork">
-        <div class="telem-icon">📶</div>
-        <div class="telem-value" id="tNetwork" style="font-size:20px">--</div>
-        <div class="telem-label">Connessione</div>
-      </div>
     </div>
-
-    <!-- INCLINOMETRO CLASSICO -->
-    <div class="telem-section-title">⚖️ Inclinometro</div>
-    <div class="incline-wrap">
-      <div class="incline-viz">
-        <div class="incline-crosshair h"></div>
-        <div class="incline-crosshair v"></div>
-        <div class="incline-bubble" id="inclineBubble"></div>
-      </div>
-    </div>
-    <div style="text-align:center;color:#888;font-size:12px;padding-bottom:20px">
-      β frontale: <b id="betaVal" style="color:#fff">--</b> · γ laterale: <b id="gammaVal" style="color:#fff">--</b>
-    </div>
-
   </div>
 </div>
 
@@ -538,7 +494,7 @@
 <script>
 // ============ CONFIG ============
 const PLAYLIST_URL = 'https://raw.githubusercontent.com/riddik14/iptv/main/playlist_italy.m3u';
-const STORAGE_KEY = 'iptv_playlist_v14';
+const STORAGE_KEY = 'iptv_playlist_v15';
 const VIEW_KEY = 'iptv_view_mode';
 const CALIB_KEY = 'iptv_calibration';
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast';
@@ -562,13 +518,10 @@ const telemBtn = $('telemBtn'), telemOverlay = $('telemOverlay'), closeTelemBtn 
 const calibraBtn = $('calibraBtn');
 
 const tPitchRoll = $('tPitchRoll'), tHeading2 = $('tHeading2');
-const tAlt2 = $('tAlt2'), tClimb = $('tClimb'), tClimbCard = $('tClimbCard');
+const tAlt2 = $('tAlt2'), tClimb = $('tClimb');
 const tGForce = $('tGForce');
 const tSpeed = $('tSpeed'), tAccuracy = $('tAccuracy');
 const tLat = $('tLat'), tLon = $('tLon');
-const tBattery = $('tBattery'), tNetwork = $('tNetwork');
-const inclineBubble = $('inclineBubble');
-const betaVal = $('betaVal'), gammaVal = $('gammaVal');
 
 const horizonCanvas = $('horizonCanvas');
 const compassCanvas = $('compassCanvas');
@@ -592,10 +545,13 @@ const ALT_HISTORY_MS = 8000;
 let currentAltitude = null;
 let currentClimbRate = 0;
 
-// G-Force
-let accelX = 0, accelY = 0, accelZ = 9.81;
-let peakLatVal = 0, peakLonVal = 0, peakTotalVal = 1.0;
+// G-Force corretta: accelerazione lineare (gravità rimossa)
+// gravity: stima della gravità per sottrazione
+let gforceX = 0, gforceY = 0, gforceZ = 0; // in g
+let accelHistory = []; // per calibrare la gravità
+let gravityRef = { x: 0, y: 0, z: 9.81 }; // stima gravità iniziale
 
+// Calibrazione
 try {
   const cal = JSON.parse(localStorage.getItem(CALIB_KEY) || 'null');
   if (cal) {
@@ -734,15 +690,13 @@ function updateTelemetry() {
   if (currentAltitude != null) {
     tAlt2.innerHTML = currentAltitude.toFixed(0) + '<span class="telem-unit">m</span>';
   }
-  // Velocità verticale
   tClimb.innerHTML = (currentClimbRate >= 0 ? '+' : '') + currentClimbRate.toFixed(1) + '<span class="telem-unit">m/s</span>';
-  tClimbCard.classList.remove('climb', 'descent');
   if (currentClimbRate > 0.3) tClimb.style.color = '#4ade80';
   else if (currentClimbRate < -0.3) tClimb.style.color = '#f87171';
   else tClimb.style.color = '#4a7dff';
 }
 
-// ============ AGGIORNA TUTTI GLI STRUMENTI ============
+// ============ AGGIORNA STRUMENTI ============
 function updateAllInstruments() {
   if (currentBeta == null || currentGamma == null) return;
   const rawBeta = currentBeta;
@@ -751,14 +705,11 @@ function updateAllInstruments() {
   const roll = Math.max(-90, Math.min(90, rawGamma - calibOffsetGamma));
 
   tPitchRoll.textContent = pitch.toFixed(0) + '° / ' + roll.toFixed(0) + '°';
-  betaVal.textContent = rawBeta.toFixed(1) + '°';
-  gammaVal.textContent = rawGamma.toFixed(1) + '°';
 
   drawHorizon(pitch, roll);
-  updateInclineBubble();
 }
 
-// ============ ORIZZONTE ARTIFICIALE (stile aereo) ============
+// ============ ORIZZONTE ============
 function drawHorizon(pitch, roll) {
   const ctx = horizonCanvas.getContext('2d');
   const size = horizonCanvas.width;
@@ -770,36 +721,29 @@ function drawHorizon(pitch, roll) {
   ctx.arc(cx, cy, r, 0, 2 * Math.PI);
   ctx.clip();
 
-  // Cielo di sfondo (gradiente)
   const skyGrad = ctx.createLinearGradient(0, cy - r, 0, cy);
   skyGrad.addColorStop(0, '#0a4a8a');
   skyGrad.addColorStop(1, '#4a90e2');
   ctx.fillStyle = skyGrad;
   ctx.fillRect(0, 0, size, size);
 
-  // Rotazione per roll (segno negativo = convenzione corretta)
   ctx.translate(cx, cy);
   ctx.rotate(-roll * Math.PI / 180);
 
-  // Offset verticale per pitch
   const pitchOffset = pitch * 3;
 
-  // Cielo sopra
-  ctx.fillStyle = '#4a90e2';
   const skyGrad2 = ctx.createLinearGradient(0, -r * 2 - pitchOffset, 0, -pitchOffset);
   skyGrad2.addColorStop(0, '#0a4a8a');
   skyGrad2.addColorStop(1, '#4a90e2');
   ctx.fillStyle = skyGrad2;
   ctx.fillRect(-r * 2, -r * 2 - pitchOffset, r * 4, r * 2);
 
-  // Terra sotto
   const earthGrad = ctx.createLinearGradient(0, -pitchOffset, 0, r * 2 - pitchOffset);
   earthGrad.addColorStop(0, '#6b4423');
   earthGrad.addColorStop(1, '#3a2412');
   ctx.fillStyle = earthGrad;
   ctx.fillRect(-r * 2, -pitchOffset, r * 4, r * 2);
 
-  // Linea orizzonte
   ctx.strokeStyle = '#fff';
   ctx.lineWidth = 2.5;
   ctx.beginPath();
@@ -807,7 +751,6 @@ function drawHorizon(pitch, roll) {
   ctx.lineTo(r * 2, -pitchOffset);
   ctx.stroke();
 
-  // Tacche graduazioni
   ctx.font = 'bold 11px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.9)';
   ctx.textAlign = 'center';
@@ -831,14 +774,12 @@ function drawHorizon(pitch, roll) {
 
   ctx.restore();
 
-  // Cornice circolare
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, 2 * Math.PI);
   ctx.strokeStyle = '#2a2a35';
   ctx.lineWidth = 5;
   ctx.stroke();
 
-  // Tacche roll in alto (arco graduato fisso)
   ctx.save();
   ctx.translate(cx, cy);
   for (let angle = -60; angle <= 60; angle += 15) {
@@ -854,7 +795,6 @@ function drawHorizon(pitch, roll) {
   }
   ctx.restore();
 
-  // Freccia roll (piccola, indica il roll attuale)
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate(-roll * Math.PI / 180);
@@ -867,7 +807,6 @@ function drawHorizon(pitch, roll) {
   ctx.fill();
   ctx.restore();
 
-  // Mirino centrale (simbolo aereo fisso)
   ctx.save();
   ctx.translate(cx, cy);
   ctx.strokeStyle = '#ffcc00';
@@ -883,14 +822,13 @@ function drawHorizon(pitch, roll) {
   ctx.restore();
 }
 
-// ============ BUSSOLA STILE AEREO (HSI) ============
+// ============ BUSSOLA ============
 function drawCompassAero(heading) {
   const ctx = compassCanvas.getContext('2d');
   const size = compassCanvas.width;
   const cx = size / 2, cy = size / 2, r = size / 2 - 8;
   ctx.clearRect(0, 0, size, size);
 
-  // Sfondo circolare
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, 2 * Math.PI);
   ctx.fillStyle = '#0a0a10';
@@ -899,29 +837,22 @@ function drawCompassAero(heading) {
   ctx.lineWidth = 4;
   ctx.stroke();
 
-  // Il quadrante ruota in senso OPPOSTO alla rotta
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate(-heading * Math.PI / 180);
 
-  // Cerchi concentrici
   ctx.beginPath();
   ctx.arc(0, 0, r * 0.85, 0, 2 * Math.PI);
   ctx.strokeStyle = 'rgba(74,125,255,0.15)';
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  // Tacche ogni 5°, major ogni 10°, cardinali ogni 30°
   for (let deg = 0; deg < 360; deg += 5) {
     const rad = (deg - 90) * Math.PI / 180;
     let len, color, width;
-    if (deg % 30 === 0) {
-      len = r * 0.18; color = '#fff'; width = 3;
-    } else if (deg % 10 === 0) {
-      len = r * 0.12; color = '#aaa'; width = 2;
-    } else {
-      len = r * 0.06; color = '#555'; width = 1;
-    }
+    if (deg % 30 === 0) { len = r * 0.18; color = '#fff'; width = 3; }
+    else if (deg % 10 === 0) { len = r * 0.12; color = '#aaa'; width = 2; }
+    else { len = r * 0.06; color = '#555'; width = 1; }
     const x1 = Math.cos(rad) * (r - 5);
     const y1 = Math.sin(rad) * (r - 5);
     const x2 = Math.cos(rad) * (r - 5 - len);
@@ -934,7 +865,6 @@ function drawCompassAero(heading) {
     ctx.stroke();
   }
 
-  // Etichette cardinali e intermedie
   ctx.font = 'bold 22px sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -948,7 +878,6 @@ function drawCompassAero(heading) {
     ctx.fillText(txt, x, y);
   }
 
-  // Etichette numeriche ogni 30°
   ctx.font = 'bold 12px sans-serif';
   for (let deg = 30; deg < 360; deg += 30) {
     if (labels[deg]) continue;
@@ -958,10 +887,8 @@ function drawCompassAero(heading) {
     ctx.fillStyle = '#888';
     ctx.fillText(deg, x, y);
   }
-
   ctx.restore();
 
-  // Freccia di rotta (fissa in alto, indica dove stai andando)
   ctx.save();
   ctx.translate(cx, cy);
   ctx.beginPath();
@@ -977,26 +904,24 @@ function drawCompassAero(heading) {
   ctx.stroke();
   ctx.restore();
 
-  // Valore di rotta al centro
   ctx.save();
   ctx.translate(cx, cy + 30);
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 26px monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  const headingDeg = Math.round(heading) % 360;
+  const headingDeg = ((Math.round(heading) % 360) + 360) % 360;
   ctx.fillText(String(headingDeg).padStart(3, '0') + '°', 0, 0);
   ctx.restore();
 }
 
-// ============ ALTIMETRO CON FRECCIA STILE AEREO ============
+// ============ ALTIMETRO ============
 function drawAltimeter(altitude, climbRate) {
   const ctx = altimeterCanvas.getContext('2d');
   const size = altimeterCanvas.width;
   const cx = size / 2, cy = size / 2, r = size / 2 - 8;
   ctx.clearRect(0, 0, size, size);
 
-  // Sfondo
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, 2 * Math.PI);
   ctx.fillStyle = '#0a0a10';
@@ -1014,13 +939,8 @@ function drawAltimeter(altitude, climbRate) {
     return;
   }
 
-  // Scala: ogni tacca = 100m, etichette ogni 500m
-  // 360° divisi in 36 tacche (10° ciascuna) = 3600m di range visivo
-  // Ma per un'auto è troppo: uso scala 0-2000m con 20 tacche da 100m
-  const rangeMeters = 2000; // range visivo completo
-  const startAlt = Math.floor((altitude - 100) / 100) * 100; // arrotonda a 100m indietro
+  const startAlt = Math.floor((altitude - 100) / 100) * 100;
 
-  // Tacche attorno al quadrante
   for (let i = 0; i < 36; i++) {
     const angle = (i * 10 - 90) * Math.PI / 180;
     const altLabel = startAlt + i * 100;
@@ -1042,23 +962,20 @@ function drawAltimeter(altitude, climbRate) {
       const tx = cx + Math.cos(angle) * (r - 45);
       const ty = cy + Math.sin(angle) * (r - 45);
       ctx.fillStyle = '#ccc';
-      ctx.font = 'bold 14px sans-serif';
+      ctx.font = 'bold 13px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(altLabel, tx, ty);
     }
   }
 
-  // Freccia che punta all'altitudine corrente
-  // Normalizza altitudine rispetto a startAlt
   const relAlt = altitude - startAlt;
   const frac = (relAlt / (36 * 100)) * 360;
   const angle = (frac - 90) * Math.PI / 180;
 
-  // Freccia
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.rotate(angle + Math.PI / 2); // +90° per far puntare verso l'alto
+  ctx.rotate(angle + Math.PI / 2);
   ctx.beginPath();
   ctx.moveTo(0, -r * 0.75);
   ctx.lineTo(-14, -r * 0.5);
@@ -1078,7 +995,6 @@ function drawAltimeter(altitude, climbRate) {
   ctx.stroke();
   ctx.restore();
 
-  // Perno centrale
   ctx.beginPath();
   ctx.arc(cx, cy, 8, 0, 2 * Math.PI);
   ctx.fillStyle = '#2a2a35';
@@ -1087,7 +1003,6 @@ function drawAltimeter(altitude, climbRate) {
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Valore al centro
   ctx.fillStyle = '#4a7dff';
   ctx.font = 'bold 26px monospace';
   ctx.textAlign = 'center';
@@ -1097,7 +1012,6 @@ function drawAltimeter(altitude, climbRate) {
   ctx.fillStyle = '#888';
   ctx.fillText('m', cx, cy + r * 0.55 + 20);
 
-  // V/S in alto
   if (Math.abs(climbRate) > 0.1) {
     const vsTxt = (climbRate >= 0 ? '+' : '') + climbRate.toFixed(1) + ' m/s';
     ctx.fillStyle = climbRate > 0 ? '#4ade80' : '#f87171';
@@ -1106,14 +1020,51 @@ function drawAltimeter(altitude, climbRate) {
   }
 }
 
-// ============ G-FORCE stile strumento circolare ============
-function drawGForce() {
+// ============ G-FORCE CORRETTA ============
+// Il problema: l'accelerometro misura la gravità + accelerazione reale.
+// Per ottenere SOLO la forza g (accelerazione reale), bisogna sottrarre
+// il vettore gravità stimato.
+//
+// Strategia:
+// 1. Filtro passa-basso per stimare la gravità (componente lenta = gravità)
+// 2. Sottrai la gravità dal segnale grezzo per ottenere l'accelerazione lineare
+// 3. Dividi per 9.81 per ottenere i g
+
+function lowPass(prev, curr, alpha = 0.9) {
+  return prev * alpha + curr * (1 - alpha);
+}
+
+function updateGForce(ax, ay, az) {
+  // Stima gravità con filtro passa-basso (componente statica)
+  gravityRef.x = lowPass(gravityRef.x, ax, 0.95);
+  gravityRef.y = lowPass(gravityRef.y, ay, 0.95);
+  gravityRef.z = lowPass(gravityRef.z, az, 0.95);
+
+  // Accelerazione lineare = segnale grezzo - gravità stimata
+  const linX = (ax - gravityRef.x) / 9.81;
+  const linY = (ay - gravityRef.y) / 9.81;
+  const linZ = (az - gravityRef.z) / 9.81;
+
+  // G-Force nelle 3 direzioni
+  gforceX = linX;
+  gforceY = linY;
+  gforceZ = linZ;
+
+  // Totale (magnitudine dell'accelerazione lineare)
+  const totalG = Math.sqrt(linX * linX + linY * linY + linZ * linZ);
+
+  // Aggiorna valore
+  tGForce.innerHTML = totalG.toFixed(2) + '<span class="telem-unit">g</span>';
+
+  drawGForce(linX, linY, linZ, totalG);
+}
+
+function drawGForce(gx, gy, gz, totalG) {
   const ctx = gforceCanvas.getContext('2d');
   const size = gforceCanvas.width;
   const cx = size / 2, cy = size / 2, r = size / 2 - 8;
   ctx.clearRect(0, 0, size, size);
 
-  // Sfondo circolare
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, 2 * Math.PI);
   ctx.fillStyle = '#0a0a10';
@@ -1122,7 +1073,6 @@ function drawGForce() {
   ctx.lineWidth = 4;
   ctx.stroke();
 
-  // Cerchi concentrici
   for (let i = 1; i <= 4; i++) {
     ctx.beginPath();
     ctx.arc(cx, cy, (r * i) / 4, 0, 2 * Math.PI);
@@ -1131,7 +1081,6 @@ function drawGForce() {
     ctx.stroke();
   }
 
-  // Crosshair
   ctx.beginPath();
   ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy);
   ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r);
@@ -1139,7 +1088,6 @@ function drawGForce() {
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  // Etichette assi
   ctx.fillStyle = '#666';
   ctx.font = 'bold 11px sans-serif';
   ctx.textAlign = 'center';
@@ -1149,7 +1097,6 @@ function drawGForce() {
   ctx.fillText('SX', cx - r + 18, cy);
   ctx.fillText('DX', cx + r - 18, cy);
 
-  // Scala g (0.5, 1.0, 1.5)
   ctx.fillStyle = '#444';
   ctx.font = 'bold 10px sans-serif';
   for (let g = 0.5; g <= 1.5; g += 0.5) {
@@ -1157,17 +1104,10 @@ function drawGForce() {
     ctx.fillText(g.toFixed(1) + 'g', cx + dist, cy - 10);
   }
 
-  // Converti in g
-  const gx = accelX / 9.81;
-  const gy = accelY / 9.81;
-
-  // Pallino
   const maxG = 1.5;
   const px = cx + (Math.max(-maxG, Math.min(maxG, gx)) / maxG) * r;
   const py = cy - (Math.max(-maxG, Math.min(maxG, gy)) / maxG) * r;
 
-  // Cerchio di glow
-  const totalG = Math.sqrt(gx * gx + gy * gy);
   let color = '#4ade80';
   if (totalG > 0.7) color = '#f87171';
   else if (totalG > 0.35) color = '#fbbf24';
@@ -1180,7 +1120,6 @@ function drawGForce() {
   ctx.arc(px, py, 30, 0, 2 * Math.PI);
   ctx.fill();
 
-  // Pallino
   ctx.beginPath();
   ctx.arc(px, py, 12, 0, 2 * Math.PI);
   ctx.fillStyle = color;
@@ -1189,36 +1128,38 @@ function drawGForce() {
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Valore totale al centro-basso
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 22px monospace';
   ctx.textAlign = 'center';
   ctx.fillText(totalG.toFixed(2) + 'g', cx, cy + r - 40);
+
+  // Piccola indicazione Z
+  ctx.fillStyle = '#888';
+  ctx.font = 'bold 11px monospace';
+  ctx.fillText('Z: ' + (gz >= 0 ? '+' : '') + gz.toFixed(2) + 'g', cx, cy + r - 18);
 }
 
-// ============ INCLINOMETRO (bolla) ============
-function updateInclineBubble() {
-  if (currentBeta == null || currentGamma == null) return;
-  const beta = currentBeta - calibOffsetBeta;
-  const gamma = currentGamma - calibOffsetGamma;
-  const range = 70;
-  const x = Math.max(-range, Math.min(range, (gamma / 90) * range));
-  const y = Math.max(-range, Math.min(range, (beta / 90) * range));
-  inclineBubble.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-}
-
-// ============ G-FORCE HANDLER ============
+// ============ ACCELEROMETRO ============
 function startAccelerometer() {
   const handler = (e) => {
     let x = e.accelerationIncludingGravity?.x;
     let y = e.accelerationIncludingGravity?.y;
     let z = e.accelerationIncludingGravity?.z;
-    if (x == null) x = e.acceleration?.x || 0;
-    if (y == null) y = e.acceleration?.y || 0;
-    if (z == null) z = e.acceleration?.z || 0;
-    accelX = x; accelY = y; accelZ = z;
-    updateGForceValues();
-    drawGForce();
+
+    // Preferisci acceleration (senza gravità) se disponibile
+    if (e.acceleration && e.acceleration.x != null) {
+      // acceleration è già senza gravità: usala diretta
+      const linX = e.acceleration.x / 9.81;
+      const linY = e.acceleration.y / 9.81;
+      const linZ = e.acceleration.z / 9.81;
+      const totalG = Math.sqrt(linX * linX + linY * linY + linZ * linZ);
+      gforceX = linX; gforceY = linY; gforceZ = linZ;
+      tGForce.innerHTML = totalG.toFixed(2) + '<span class="telem-unit">g</span>';
+      drawGForce(linX, linY, linZ, totalG);
+    } else if (x != null && y != null && z != null) {
+      // Fallback: usa accelerationIncludingGravity + filtro
+      updateGForce(x, y, z);
+    }
   };
 
   if (typeof DeviceMotionEvent !== 'undefined' &&
@@ -1229,16 +1170,6 @@ function startAccelerometer() {
   }
 }
 
-function updateGForceValues() {
-  const gx = accelX / 9.81;
-  const gy = accelY / 9.81;
-  const totalG = Math.sqrt(gx * gx + gy * gy);
-  tGForce.innerHTML = totalG.toFixed(2) + '<span class="telem-unit">g</span>';
-  if (Math.abs(gx) > Math.abs(peakLatVal)) peakLatVal = gx;
-  if (Math.abs(gy) > Math.abs(peakLonVal)) peakLonVal = gy;
-  if (totalG > peakTotalVal) peakTotalVal = totalG;
-}
-
 // ============ CALIBRAZIONE ============
 calibraBtn.addEventListener('click', () => {
   if (currentBeta == null || currentGamma == null) {
@@ -1247,11 +1178,16 @@ calibraBtn.addEventListener('click', () => {
   }
   calibOffsetBeta = currentBeta;
   calibOffsetGamma = currentGamma;
+
+  // Reset gravità stimata per ricalibrare la G-Force sulla posizione attuale
+  gravityRef = { x: 0, y: 0, z: 9.81 };
+
   try {
     localStorage.setItem(CALIB_KEY, JSON.stringify({
       beta: calibOffsetBeta, gamma: calibOffsetGamma
     }));
   } catch {}
+
   calibraBtn.textContent = '✅ OK';
   calibraBtn.classList.add('active');
   setTimeout(() => {
@@ -1281,25 +1217,6 @@ function startOrientation() {
   } else {
     window.addEventListener('deviceorientation', handler, true);
   }
-}
-
-// ============ BATTERIA / NETWORK ============
-async function updateBattery() {
-  if (!navigator.getBattery) { $('cardBattery').style.opacity = '0.35'; return; }
-  try {
-    const battery = await navigator.getBattery();
-    const update = () => { tBattery.innerHTML = Math.round(battery.level * 100) + '<span class="telem-unit">%</span>'; };
-    update();
-    battery.addEventListener('levelchange', update);
-  } catch { $('cardBattery').style.opacity = '0.35'; }
-}
-
-function updateNetwork() {
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (!conn) { $('cardNetwork').style.opacity = '0.35'; return; }
-  const update = () => { tNetwork.textContent = (conn.effectiveType || conn.type || 'N/D').toUpperCase(); };
-  update();
-  conn.addEventListener?.('change', update);
 }
 
 // ============ METEO ============
@@ -1386,15 +1303,18 @@ telemBtn.addEventListener('click', async () => {
       const perm = await DeviceMotionEvent.requestPermission();
       if (perm === 'granted') {
         window.addEventListener('devicemotion', (e) => {
-          let x = e.accelerationIncludingGravity?.x;
-          let y = e.accelerationIncludingGravity?.y;
-          let z = e.accelerationIncludingGravity?.z;
-          if (x == null) x = e.acceleration?.x || 0;
-          if (y == null) y = e.acceleration?.y || 0;
-          if (z == null) z = e.acceleration?.z || 0;
-          accelX = x; accelY = y; accelZ = z;
-          updateGForceValues();
-          drawGForce();
+          if (e.acceleration && e.acceleration.x != null) {
+            const linX = e.acceleration.x / 9.81;
+            const linY = e.acceleration.y / 9.81;
+            const linZ = e.acceleration.z / 9.81;
+            const totalG = Math.sqrt(linX * linX + linY * linY + linZ * linZ);
+            gforceX = linX; gforceY = linY; gforceZ = linZ;
+            tGForce.innerHTML = totalG.toFixed(2) + '<span class="telem-unit">g</span>';
+            drawGForce(linX, linY, linZ, totalG);
+          } else if (e.accelerationIncludingGravity) {
+            const a = e.accelerationIncludingGravity;
+            updateGForce(a.x, a.y, a.z);
+          }
         }, true);
       }
     } catch {}
@@ -1404,9 +1324,7 @@ telemBtn.addEventListener('click', async () => {
   updateAllInstruments();
   drawCompassAero(currentHeading || 0);
   drawAltimeter(currentAltitude, currentClimbRate);
-  drawGForce();
-  updateBattery();
-  updateNetwork();
+  drawGForce(gforceX, gforceY, gforceZ, Math.sqrt(gforceX**2 + gforceY**2 + gforceZ**2));
 });
 
 closeTelemBtn.addEventListener('click', () => {
@@ -1640,8 +1558,7 @@ document.addEventListener('keydown', e => {
   else if (playerOverlay.classList.contains('visible')) closePlayer();
 });
 
-// ============ LOOP AGGIORNAMENTO STRUMENTI ============
-// Aggiorna altimetro e bussola ogni secondo anche senza nuovi dati
+// Loop aggiornamento strumenti GPS
 setInterval(() => {
   if (telemOverlay.classList.contains('visible')) {
     drawAltimeter(currentAltitude, currentClimbRate);
