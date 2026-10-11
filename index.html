@@ -12,7 +12,6 @@
     background: #0f0f13; color: #fff; min-height: 100vh; overflow-x: hidden;
   }
 
-  /* TOP BAR */
   .top-bar {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 14px; background: #111;
@@ -21,11 +20,9 @@
   }
   .top-bar .title { font-size: 16px; font-weight: 700; }
   .gps-info {
-    display: none;
-    align-items: center; gap: 20px;
+    display: none; align-items: center; gap: 20px;
     background: #1a1a22; border: 1px solid #2a2a35;
-    padding: 10px 18px; border-radius: 12px;
-    white-space: nowrap;
+    padding: 10px 18px; border-radius: 12px; white-space: nowrap;
   }
   .gps-info.visible { display: flex; }
   .gps-item { display: flex; align-items: center; gap: 6px; }
@@ -34,11 +31,9 @@
   .gps-item .lbl { color: #888; font-size: 16px; }
 
   .weather-info {
-    display: none;
-    align-items: center; gap: 8px;
+    display: none; align-items: center; gap: 8px;
     background: #1a1a22; border: 1px solid #2a2a35;
-    padding: 10px 18px; border-radius: 12px;
-    white-space: nowrap;
+    padding: 10px 18px; border-radius: 12px; white-space: nowrap;
   }
   .weather-info.visible { display: flex; }
   .weather-info .w-icon { font-size: 32px; }
@@ -62,7 +57,6 @@
   #status.error { color: #ff5555; }
   #status.success { color: #4ade80; }
 
-  /* GRIGLIA */
   #channels {
     display: grid; grid-template-columns: repeat(4, 1fr);
     gap: 8px; padding: 10px;
@@ -90,7 +84,6 @@
     line-height: 1.1; width: 100%; color: #ccc;
   }
 
-  /* VISTA LISTA */
   #timeline { display: none; flex-direction: column; gap: 8px; padding: 10px; }
   body.list-view #channels { display: none; }
   body.list-view #timeline { display: flex; }
@@ -115,7 +108,6 @@
     text-transform: uppercase; letter-spacing: 0.5px;
   }
 
-  /* BOTTONE AGGIORNA */
   .bottom-bar { display: flex; justify-content: center; padding: 20px 0 30px; }
   button.action {
     padding: 14px 32px; border-radius: 12px; border: none;
@@ -125,22 +117,14 @@
   button.action:hover { background: #3a6bef; }
   button.action:disabled { background: #333; cursor: not-allowed; }
 
-  /* OVERLAY GPS nel player */
   .gps-overlay {
-    position: absolute;
-    top: 16px;
-    left: 50%;
+    position: absolute; top: 16px; left: 50%;
     transform: translateX(-50%);
-    display: none;
-    align-items: center;
-    gap: 20px;
+    display: none; align-items: center; gap: 20px;
     background: rgba(0,0,0,0.75);
     border: 1px solid rgba(255,255,255,0.15);
-    padding: 10px 22px;
-    border-radius: 14px;
-    z-index: 20;
-    pointer-events: none;
-    backdrop-filter: blur(6px);
+    padding: 10px 22px; border-radius: 14px;
+    z-index: 20; pointer-events: none; backdrop-filter: blur(6px);
   }
   .gps-overlay.visible { display: flex; }
   .gps-overlay .gps-item { display: flex; align-items: center; gap: 6px; }
@@ -148,7 +132,6 @@
   .gps-overlay .gps-item .val { font-weight: 800; font-size: 28px; line-height: 1; }
   .gps-overlay .gps-item .lbl { color: #bbb; font-size: 14px; }
 
-  /* MODALI */
   .modal {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.9); z-index: 2000;
@@ -158,9 +141,17 @@
   .modal-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 18px; background: #111;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid #222; flex-wrap: wrap; gap: 10px;
   }
   .modal-header .modal-title { font-size: 16px; font-weight: 700; }
+  .modal-header .header-actions { display: flex; gap: 8px; align-items: center; }
+  .btn-calibra {
+    background: #ff9800; border: none; color: #fff;
+    padding: 10px 18px; border-radius: 10px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  .btn-calibra:hover { background: #e68900; }
+  .btn-calibra.active { background: #2a5acf; }
   .close-modal {
     background: #2a2a35; border: none; color: #fff;
     width: 40px; height: 40px; border-radius: 10px;
@@ -169,75 +160,223 @@
   .modal-body { flex: 1; overflow: auto; }
   .modal-body iframe { width: 100%; height: 100%; border: 0; }
 
-  /* TELEMETRIA */
-  .telem-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 12px;
-    padding: 20px;
+  .telem-section-title {
+    color: #4a7dff; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    text-align: center; margin-top: 20px; margin-bottom: 4px;
   }
-  .telem-card {
-    background: #1a1a22;
-    border: 1px solid #2a2a35;
-    border-radius: 14px;
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: 130px;
-  }
-  .telem-card .telem-icon { font-size: 36px; margin-bottom: 8px; }
-  .telem-card .telem-value {
-    font-size: 32px; font-weight: 800; line-height: 1;
-    color: #4a7dff;
-  }
-  .telem-card .telem-unit { font-size: 14px; color: #888; margin-left: 4px; }
-  .telem-card .telem-label {
-    font-size: 12px; color: #888; margin-top: 6px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .telem-card.wide { grid-column: span 2; }
-  .telem-card.disabled { opacity: 0.35; }
-  .telem-card.disabled .telem-value { color: #555; }
 
-  /* Bussola canvas */
   .compass-wrap { display: flex; justify-content: center; padding: 20px; }
-  #compassCanvas {
-    width: 200px; height: 200px;
+  #compassCanvas { width: 200px; height: 200px; }
+
+  .horizon-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; padding: 20px; gap: 10px;
+  }
+  #horizonCanvas {
+    width: 260px; height: 260px;
+    border-radius: 50%; background: #000;
+  }
+  .horizon-info {
+    display: flex; gap: 20px; color: #888; font-size: 13px;
+    justify-content: center; flex-wrap: wrap;
+  }
+  .horizon-info b { color: #fff; font-size: 16px; }
+
+  .altimeter-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; padding: 20px; gap: 16px;
+  }
+  .altimeter-viz {
+    width: 100%; max-width: 500px; height: 200px;
+    background: #1a1a22; border: 1px solid #2a2a35;
+    border-radius: 14px; position: relative; overflow: hidden;
+  }
+  .altimeter-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, #2a2a35 1px, transparent 1px),
+      linear-gradient(to bottom, #2a2a35 1px, transparent 1px);
+    background-size: 20px 20px; opacity: 0.3;
+  }
+  .altimeter-line {
+    position: absolute; left: 0; right: 0; top: 50%;
+    height: 2px; background: #ff9800; opacity: 0.5;
+  }
+  .altimeter-dot {
+    position: absolute; width: 16px; height: 16px;
+    border-radius: 50%; background: #4a7dff;
+    box-shadow: 0 0 20px #4a7dff;
+    transform: translate(-50%, -50%);
+    transition: left 0.3s ease-out, top 0.3s ease-out;
+  }
+  .altimeter-dot.climb { background: #4ade80; box-shadow: 0 0 20px #4ade80; }
+  .altimeter-dot.descent { background: #f87171; box-shadow: 0 0 20px #f87171; }
+  .altimeter-label {
+    position: absolute; top: 10px; left: 12px;
+    font-size: 12px; color: #888;
+  }
+  .altimeter-current {
+    position: absolute; top: 10px; right: 12px;
+    font-size: 14px; font-weight: 700; color: #fff;
   }
 
-  /* Inclinometro */
-  .incline-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-  }
+  .incline-wrap { display: flex; justify-content: center; padding: 20px; }
   .incline-viz {
-    width: 200px; height: 200px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: #1a1a22; border: 2px solid #2a2a35;
+    position: relative; overflow: hidden;
+  }
+  .incline-bubble {
+    width: 40px; height: 40px; background: #4a7dff;
+    border-radius: 50%; position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+    box-shadow: 0 0 20px rgba(74,125,255,0.6);
+  }
+  .incline-crosshair { position: absolute; background: #2a2a35; }
+  .incline-crosshair.h { width: 100%; height: 1px; top: 50%; }
+  .incline-crosshair.v { height: 100%; width: 1px; left: 50%; }
+
+  /* ===== G-FORCE ===== */
+  .gforce-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; padding: 20px; gap: 16px;
+  }
+  .gforce-viz {
+    width: 260px; height: 260px;
     border-radius: 50%;
-    background: #1a1a22;
+    background: radial-gradient(circle, #1a1a22 0%, #0f0f13 100%);
     border: 2px solid #2a2a35;
     position: relative;
     overflow: hidden;
   }
-  .incline-bubble {
-    width: 40px; height: 40px;
-    background: #4a7dff;
+  .gforce-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(74,125,255,0.15);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .gforce-circle.c1 { width: 25%; height: 25%; }
+  .gforce-circle.c2 { width: 50%; height: 50%; }
+  .gforce-circle.c3 { width: 75%; height: 75%; }
+  .gforce-circle.c4 { width: 100%; height: 100%; border-color: rgba(74,125,255,0.35); }
+
+  .gforce-crosshair { position: absolute; background: rgba(74,125,255,0.2); }
+  .gforce-crosshair.h { width: 100%; height: 1px; top: 50%; }
+  .gforce-crosshair.v { height: 100%; width: 1px; left: 50%; }
+
+  .gforce-dot {
+    width: 20px; height: 20px;
+    background: #4ade80;
     border-radius: 50%;
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    transition: transform 0.1s ease-out;
-    box-shadow: 0 0 20px rgba(74,125,255,0.6);
+    box-shadow: 0 0 25px #4ade80;
+    transition: transform 0.08s ease-out, background 0.2s, box-shadow 0.2s;
+    z-index: 5;
   }
-  .incline-crosshair {
+  .gforce-dot.medium {
+    background: #fbbf24;
+    box-shadow: 0 0 25px #fbbf24;
+  }
+  .gforce-dot.high {
+    background: #f87171;
+    box-shadow: 0 0 30px #f87171;
+  }
+
+  .gforce-value {
     position: absolute;
-    background: #2a2a35;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+    pointer-events: none;
+    z-index: 10;
   }
-  .incline-crosshair.h { width: 100%; height: 1px; top: 50%; }
-  .incline-crosshair.v { height: 100%; width: 1px; left: 50%; }
+
+  .gforce-axis-labels {
+    position: absolute; inset: 0;
+    font-size: 10px;
+    font-weight: 700;
+    color: #666;
+    pointer-events: none;
+  }
+  .gforce-axis-labels .top {
+    position: absolute; top: 6px; left: 50%;
+    transform: translateX(-50%);
+  }
+  .gforce-axis-labels .bottom {
+    position: absolute; bottom: 6px; left: 50%;
+    transform: translateX(-50%);
+  }
+  .gforce-axis-labels .left {
+    position: absolute; left: 8px; top: 50%;
+    transform: translateY(-50%);
+  }
+  .gforce-axis-labels .right {
+    position: absolute; right: 8px; top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .gforce-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 500px;
+    width: 100%;
+  }
+  .gforce-stat {
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .gforce-stat .label {
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .gforce-stat .value {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+    color: #4ade80;
+    transition: color 0.2s;
+  }
+  .gforce-stat .value.medium { color: #fbbf24; }
+  .gforce-stat .value.high { color: #f87171; }
+  .gforce-stat .axis-sub {
+    font-size: 10px;
+    color: #555;
+    margin-top: 4px;
+  }
+
+  .gforce-peak {
+    max-width: 500px;
+    width: 100%;
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #888;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .gforce-peak b {
+    color: #ffcc00;
+    font-size: 14px;
+  }
 
   /* PLAYER */
   #playerOverlay {
@@ -270,7 +409,6 @@
   .video-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: #000; position: relative; }
   video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
-  /* MENU PLAYER */
   #channelMenu {
     width: 420px; background: #111; border-left: 1px solid #222;
     display: flex; flex-direction: column;
@@ -347,7 +485,6 @@
   <button class="action" id="refreshBtn">🔄 Aggiorna</button>
 </div>
 
-<!-- MODALE TRAFFICO -->
 <div class="modal" id="trafficOverlay">
   <div class="modal-header">
     <div class="modal-title">🚦 Traffico in tempo reale</div>
@@ -356,51 +493,94 @@
   <div class="modal-body" id="trafficBody"></div>
 </div>
 
-<!-- MODALE TELEMETRIA -->
 <div class="modal" id="telemOverlay">
   <div class="modal-header">
     <div class="modal-title">📊 Telemetria</div>
-    <button class="close-modal" id="closeTelemBtn">✕</button>
+    <div class="header-actions">
+      <button class="btn-calibra" id="calibraBtn">🎯 Azzera inclinometro</button>
+      <button class="close-modal" id="closeTelemBtn">✕</button>
+    </div>
   </div>
   <div class="modal-body">
-    <div class="telem-grid">
-      <div class="telem-card" id="cardSpeed">
-        <div class="telem-icon">🚗</div>
-        <div class="telem-value" id="tSpeed">--<span class="telem-unit">km/h</span></div>
-        <div class="telem-label">Velocità</div>
-      </div>
-      <div class="telem-card" id="cardAlt">
-        <div class="telem-icon">⛰️</div>
-        <div class="telem-value" id="tAlt">--<span class="telem-unit">m</span></div>
-        <div class="telem-label">Altitudine</div>
-      </div>
-      <div class="telem-card" id="cardHeading">
-        <div class="telem-icon">🧭</div>
-        <div class="telem-value" id="tHeading">--<span class="telem-unit">°</span></div>
-        <div class="telem-label">Direzione GPS</div>
-      </div>
-      <div class="telem-card" id="cardAccuracy">
-        <div class="telem-icon">🎯</div>
-        <div class="telem-value" id="tAccuracy">--<span class="telem-unit">m</span></div>
-        <div class="telem-label">Precisione</div>
-      </div>
-      <div class="telem-card" id="cardLat">
-        <div class="telem-icon">📍</div>
-        <div class="telem-value" id="tLat" style="font-size:18px">--</div>
-        <div class="telem-label">Latitudine</div>
-      </div>
-      <div class="telem-card" id="cardLon">
-        <div class="telem-icon">📍</div>
-        <div class="telem-value" id="tLon" style="font-size:18px">--</div>
-        <div class="telem-label">Longitudine</div>
+
+    <div class="telem-section-title">✈️ Orizzonte Artificiale</div>
+    <div class="horizon-wrap">
+      <canvas id="horizonCanvas" width="260" height="260"></canvas>
+      <div class="horizon-info">
+        <div>Roll: <b id="rollVal">0°</b></div>
+        <div>Pitch: <b id="pitchVal">0°</b></div>
+        <div id="calibStatus" style="color:#4ade80">📐 Calibrato</div>
       </div>
     </div>
 
+    <div class="telem-section-title">⛰️ Altimetro & Velocità Verticale</div>
+    <div class="altimeter-wrap">
+      <div class="altimeter-viz">
+        <div class="altimeter-grid"></div>
+        <div class="altimeter-line"></div>
+        <div class="altimeter-label">Quota</div>
+        <div class="altimeter-current" id="altCurrent">-- m</div>
+        <div class="altimeter-dot" id="altDot" style="left: 50%; top: 50%"></div>
+      </div>
+      <div class="horizon-info">
+        <div>V/S: <b id="climbRate">0.0 m/s</b></div>
+        <div>V/S: <b id="climbRateMin">0 m/min</b></div>
+        <div>Quota: <b id="altCurrent2">-- m</b></div>
+      </div>
+    </div>
+
+    <!-- ===== G-FORCE ===== -->
+    <div class="telem-section-title">💥 Forza G</div>
+    <div class="gforce-wrap">
+      <div class="gforce-viz">
+        <div class="gforce-circle c4"></div>
+        <div class="gforce-circle c3"></div>
+        <div class="gforce-circle c2"></div>
+        <div class="gforce-circle c1"></div>
+        <div class="gforce-crosshair h"></div>
+        <div class="gforce-crosshair v"></div>
+        <div class="gforce-axis-labels">
+          <span class="top">▲ Frena</span>
+          <span class="bottom">▼ Accelera</span>
+          <span class="left">◀ Sinistra</span>
+          <span class="right">Destra ▶</span>
+        </div>
+        <div class="gforce-dot" id="gforceDot"></div>
+        <div class="gforce-value" id="gforceValue">1.00g</div>
+      </div>
+
+      <div class="gforce-stats">
+        <div class="gforce-stat">
+          <div class="label">Laterale (X)</div>
+          <div class="value" id="gforceX">0.00</div>
+          <div class="axis-sub">g</div>
+        </div>
+        <div class="gforce-stat">
+          <div class="label">Longitudinale (Y)</div>
+          <div class="value" id="gforceY">0.00</div>
+          <div class="axis-sub">g</div>
+        </div>
+        <div class="gforce-stat">
+          <div class="label">Verticale (Z)</div>
+          <div class="value" id="gforceZ">0.00</div>
+          <div class="axis-sub">g</div>
+        </div>
+      </div>
+
+      <div class="gforce-peak">
+        <span>📈 Picco laterale: <b id="peakLat">0.00 g</b></span>
+        <span>📈 Picco long.: <b id="peakLon">0.00 g</b></span>
+        <span>📈 Picco tot.: <b id="peakTotal">1.00 g</b></span>
+        <span style="cursor:pointer;color:#4a7dff" id="resetPeak">🔄 Reset picchi</span>
+      </div>
+    </div>
+
+    <div class="telem-section-title">🧭 Bussola</div>
     <div class="compass-wrap">
       <canvas id="compassCanvas" width="200" height="200"></canvas>
     </div>
-    <div style="text-align:center;color:#888;font-size:12px;margin-top:-10px">Bussola (DeviceOrientation)</div>
 
+    <div class="telem-section-title">⚖️ Inclinometro</div>
     <div class="incline-wrap">
       <div class="incline-viz">
         <div class="incline-crosshair h"></div>
@@ -408,34 +588,46 @@
         <div class="incline-bubble" id="inclineBubble"></div>
       </div>
     </div>
-    <div style="text-align:center;color:#888;font-size:12px">Inclinometro (beta / gamma)</div>
+    <div style="text-align:center;color:#888;font-size:12px;padding-bottom:10px">
+      β frontale: <b id="betaVal" style="color:#fff">--</b> · γ laterale: <b id="gammaVal" style="color:#fff">--</b>
+    </div>
 
-    <div class="telem-grid">
-      <div class="telem-card" id="cardBeta">
-        <div class="telem-icon">↕️</div>
-        <div class="telem-value" id="tBeta">--<span class="telem-unit">°</span></div>
-        <div class="telem-label">Inclinazione frontale (β)</div>
+    <div class="telem-section-title">📡 Altre Info</div>
+    <div class="telem-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:20px">
+      <div class="telem-card" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:14px;padding:18px;text-align:center">
+        <div style="font-size:36px;margin-bottom:8px">🚗</div>
+        <div style="font-size:32px;font-weight:800;line-height:1;color:#4a7dff" id="tSpeed">--<span style="font-size:14px;color:#888;margin-left:4px">km/h</span></div>
+        <div style="font-size:12px;color:#888;margin-top:6px;text-transform:uppercase">Velocità</div>
       </div>
-      <div class="telem-card" id="cardGamma">
-        <div class="telem-icon">↔️</div>
-        <div class="telem-value" id="tGamma">--<span class="telem-unit">°</span></div>
-        <div class="telem-label">Inclinazione laterale (γ)</div>
+      <div class="telem-card" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:14px;padding:18px;text-align:center">
+        <div style="font-size:36px;margin-bottom:8px">🎯</div>
+        <div style="font-size:32px;font-weight:800;line-height:1;color:#4a7dff" id="tAccuracy">--<span style="font-size:14px;color:#888;margin-left:4px">m</span></div>
+        <div style="font-size:12px;color:#888;margin-top:6px;text-transform:uppercase">Precisione GPS</div>
       </div>
-      <div class="telem-card" id="cardBattery">
-        <div class="telem-icon">🔋</div>
-        <div class="telem-value" id="tBattery">--<span class="telem-unit">%</span></div>
-        <div class="telem-label">Batteria</div>
+      <div class="telem-card" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:14px;padding:18px;text-align:center">
+        <div style="font-size:36px;margin-bottom:8px">📍</div>
+        <div style="font-size:18px;font-weight:800;line-height:1;color:#4a7dff" id="tLat">--</div>
+        <div style="font-size:12px;color:#888;margin-top:6px;text-transform:uppercase">Latitudine</div>
       </div>
-      <div class="telem-card" id="cardNetwork">
-        <div class="telem-icon">📡</div>
-        <div class="telem-value" id="tNetwork" style="font-size:20px">--</div>
-        <div class="telem-label">Connessione</div>
+      <div class="telem-card" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:14px;padding:18px;text-align:center">
+        <div style="font-size:36px;margin-bottom:8px">📍</div>
+        <div style="font-size:18px;font-weight:800;line-height:1;color:#4a7dff" id="tLon">--</div>
+        <div style="font-size:12px;color:#888;margin-top:6px;text-transform:uppercase">Longitudine</div>
+      </div>
+      <div class="telem-card" id="cardBattery" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:14px;padding:18px;text-align:center">
+        <div style="font-size:36px;margin-bottom:8px">🔋</div>
+        <div style="font-size:32px;font-weight:800;line-height:1;color:#4a7dff" id="tBattery">--<span style="font-size:14px;color:#888;margin-left:4px">%</span></div>
+        <div style="font-size:12px;color:#888;margin-top:6px;text-transform:uppercase">Batteria</div>
+      </div>
+      <div class="telem-card" id="cardNetwork" style="background:#1a1a22;border:1px solid #2a2a35;border-radius:14px;padding:18px;text-align:center">
+        <div style="font-size:36px;margin-bottom:8px">📶</div>
+        <div style="font-size:20px;font-weight:800;line-height:1;color:#4a7dff" id="tNetwork">--</div>
+        <div style="font-size:12px;color:#888;margin-top:6px;text-transform:uppercase">Connessione</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- PLAYER -->
 <div id="playerOverlay">
   <div class="player-header">
     <div class="info">
@@ -448,7 +640,6 @@
   <div class="player-body">
     <div class="video-wrap">
       <video id="videoEl" controls playsinline autoplay></video>
-      <!-- OVERLAY GPS CENTRATO NEL PLAYER -->
       <div class="gps-overlay" id="gpsOverlay">
         <div class="gps-item" id="gpsOverlaySpeed">
           <span class="icon">🚗</span>
@@ -475,8 +666,9 @@
 <script>
 // ============ CONFIG ============
 const PLAYLIST_URL = 'https://raw.githubusercontent.com/riddik14/iptv/main/playlist_italy.m3u';
-const STORAGE_KEY = 'iptv_playlist_v11';
+const STORAGE_KEY = 'iptv_playlist_v13';
 const VIEW_KEY = 'iptv_view_mode';
+const CALIB_KEY = 'iptv_calibration';
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast';
 
 // ============ DOM ============
@@ -495,12 +687,31 @@ const weatherInfo = $('weatherInfo'), wIcon = $('wIcon'), wTemp = $('wTemp');
 const trafficBtn = $('trafficBtn'), trafficOverlay = $('trafficOverlay');
 const trafficBody = $('trafficBody'), closeTrafficBtn = $('closeTrafficBtn');
 const telemBtn = $('telemBtn'), telemOverlay = $('telemOverlay'), closeTelemBtn = $('closeTelemBtn');
-// Telemetria fields
-const tSpeed = $('tSpeed'), tAlt = $('tAlt'), tHeading = $('tHeading'), tAccuracy = $('tAccuracy');
-const tLat = $('tLat'), tLon = $('tLon'), tBeta = $('tBeta'), tGamma = $('tGamma');
+const calibraBtn = $('calibraBtn');
+
+const tSpeed = $('tSpeed'), tAccuracy = $('tAccuracy');
+const tLat = $('tLat'), tLon = $('tLon');
 const tBattery = $('tBattery'), tNetwork = $('tNetwork');
 const inclineBubble = $('inclineBubble');
 const compassCanvas = $('compassCanvas');
+const horizonCanvas = $('horizonCanvas');
+const altDot = $('altDot');
+const altCurrent = $('altCurrent'), altCurrent2 = $('altCurrent2');
+const climbRate = $('climbRate'), climbRateMin = $('climbRateMin');
+const rollVal = $('rollVal'), pitchVal = $('pitchVal');
+const betaVal = $('betaVal'), gammaVal = $('gammaVal');
+const calibStatus = $('calibStatus');
+
+// G-Force
+const gforceDot = $('gforceDot');
+const gforceValue = $('gforceValue');
+const gforceX = $('gforceX');
+const gforceY = $('gforceY');
+const gforceZ = $('gforceZ');
+const peakLat = $('peakLat');
+const peakLon = $('peakLon');
+const peakTotal = $('peakTotal');
+const resetPeak = $('resetPeak');
 
 // ============ STATO ============
 let allChannels = [], hls = null, currentChannel = null;
@@ -510,6 +721,28 @@ let coordsOk = false;
 let currentLat = null, currentLon = null;
 let currentHeading = null;
 let currentBeta = null, currentGamma = null;
+let currentAccuracy = null;
+
+let calibOffsetBeta = 0, calibOffsetGamma = 0;
+
+let altHistory = [];
+const ALT_HISTORY_MS = 8000;
+let currentAltitude = null;
+let currentClimbRate = 0;
+
+// G-Force state
+let accelX = 0, accelY = 0, accelZ = 9.81; // m/s² (a riposo Z ≈ 9.81)
+let peakLatVal = 0, peakLonVal = 0, peakTotalVal = 1.0;
+let hasAccelPermission = false;
+
+// Recupera calibrazione
+try {
+  const cal = JSON.parse(localStorage.getItem(CALIB_KEY) || 'null');
+  if (cal) {
+    calibOffsetBeta = cal.beta || 0;
+    calibOffsetGamma = cal.gamma || 0;
+  }
+} catch {}
 
 // ============ UTILITÀ ============
 const placeholder = () => 'data:image/svg+xml;utf8,' + encodeURIComponent(
@@ -526,7 +759,6 @@ function makeImg(src, alt, cls) {
   return img;
 }
 
-// ============ GPS ============
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371000;
   const toRad = d => d * Math.PI / 180;
@@ -537,6 +769,7 @@ function haversine(lat1, lon1, lat2, lon2) {
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
+// ============ GPS ============
 function startGps() {
   if (!navigator.geolocation) return;
   navigator.geolocation.watchPosition(
@@ -550,7 +783,6 @@ function startGps() {
         currentLon = c.longitude;
       }
 
-      // Velocità
       let speedKmh = null;
       if (c.speed != null && !isNaN(c.speed)) {
         speedKmh = c.speed * 3.6;
@@ -566,8 +798,20 @@ function startGps() {
       const heading = (c.heading != null && !isNaN(c.heading)) ? c.heading : null;
       const accuracy = c.accuracy != null ? c.accuracy : null;
       if (heading != null) currentHeading = heading;
+      if (accuracy != null) currentAccuracy = accuracy;
 
-      // Barra superiore: mostra solo se dati validi
+      if (altitude != null) {
+        currentAltitude = altitude;
+        altHistory.push({ alt: altitude, time: now });
+        const cutoff = now - ALT_HISTORY_MS;
+        altHistory = altHistory.filter(h => h.time >= cutoff);
+        if (altHistory.length >= 2) {
+          const first = altHistory[0];
+          const dt = (now - first.time) / 1000;
+          if (dt > 2) currentClimbRate = (altitude - first.alt) / dt;
+        }
+      }
+
       let hasAny = false;
       const speedOk = (speedKmh != null && speedKmh >= 0 && speedKmh < 300);
       if (speedOk) {
@@ -596,10 +840,10 @@ function startGps() {
         gpsOverlay.classList.add('visible');
       }
 
-      // Aggiorna telemetria se il pannello è aperto
       updateTelemetry();
+      updateAltimeter();
+      updateHorizon();
 
-      // Meteo
       if (coordsOk && currentLat && currentLon) {
         loadWeather(currentLat, currentLon);
       }
@@ -613,27 +857,384 @@ function startGps() {
       weatherInfo.classList.remove('visible');
       gpsOverlay.classList.remove('visible');
     },
-    { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+    { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 }
   );
 }
 
 function updateTelemetry() {
-  // Sempre aggiornati se disponibili
   if (speedVal.textContent !== '--') {
-    tSpeed.innerHTML = speedVal.textContent + '<span class="telem-unit">km/h</span>';
+    tSpeed.innerHTML = speedVal.textContent + '<span style="font-size:14px;color:#888;margin-left:4px">km/h</span>';
   }
-  if (altVal.textContent !== '--') {
-    tAlt.innerHTML = altVal.textContent + '<span class="telem-unit">m</span>';
+  if (currentAccuracy != null) {
+    tAccuracy.innerHTML = currentAccuracy.toFixed(0) + '<span style="font-size:14px;color:#888;margin-left:4px">m</span>';
   }
-  if (currentHeading != null) {
-    tHeading.innerHTML = currentHeading.toFixed(0) + '<span class="telem-unit">°</span>';
-    drawCompass(currentHeading);
-  }
+  if (currentHeading != null) drawCompass(currentHeading);
   if (lastPos) {
     tLat.textContent = lastPos.lat.toFixed(5);
     tLon.textContent = lastPos.lon.toFixed(5);
   }
-  // Accuratezza non la salviamo ma la leggiamo dall'ultima pos
+}
+
+// ============ ALTIMETRO ============
+function updateAltimeter() {
+  if (currentAltitude == null) return;
+  altCurrent.textContent = currentAltitude.toFixed(0) + ' m';
+  altCurrent2.textContent = currentAltitude.toFixed(0) + ' m';
+  climbRate.textContent = (currentClimbRate >= 0 ? '+' : '') + currentClimbRate.toFixed(2) + ' m/s';
+  climbRateMin.textContent = (currentClimbRate * 60 >= 0 ? '+' : '') + (currentClimbRate * 60).toFixed(0) + ' m/min';
+
+  const ratio = Math.max(-1, Math.min(1, currentClimbRate / 5));
+  const yPct = 50 - (ratio * 40);
+  altDot.style.top = yPct + '%';
+  altDot.style.left = '50%';
+
+  altDot.classList.remove('climb', 'descent');
+  if (currentClimbRate > 0.3) altDot.classList.add('climb');
+  else if (currentClimbRate < -0.3) altDot.classList.add('descent');
+}
+
+// ============ ORIZZONTE ============
+function updateHorizon() {
+  if (currentBeta == null || currentGamma == null) return;
+  const rawBeta = currentBeta;
+  const rawGamma = currentGamma;
+  const beta = rawBeta - calibOffsetBeta;
+  const gamma = rawGamma - calibOffsetGamma;
+  const pitch = Math.max(-90, Math.min(90, beta));
+  const roll = Math.max(-90, Math.min(90, gamma));
+
+  pitchVal.textContent = pitch.toFixed(1) + '°';
+  rollVal.textContent = roll.toFixed(1) + '°';
+  betaVal.textContent = rawBeta.toFixed(1) + '°';
+  gammaVal.textContent = rawGamma.toFixed(1) + '°';
+
+  drawHorizon(pitch, roll);
+}
+
+function drawHorizon(pitch, roll) {
+  const ctx = horizonCanvas.getContext('2d');
+  const size = 260, cx = size / 2, cy = size / 2, r = 120;
+  ctx.clearRect(0, 0, size, size);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.clip();
+
+  ctx.translate(cx, cy);
+  ctx.rotate(roll * Math.PI / 180);
+  ctx.translate(-cx, -cy);
+
+  const pitchOffset = pitch * 2;
+
+  ctx.fillStyle = '#4a90e2';
+  ctx.fillRect(cx - r * 2, cy - r * 2 + pitchOffset, r * 4, r * 2);
+
+  ctx.fillStyle = '#8b5a2b';
+  ctx.fillRect(cx - r * 2, cy + pitchOffset, r * 4, r * 2);
+
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx - r * 2, cy + pitchOffset);
+  ctx.lineTo(cx + r * 2, cy + pitchOffset);
+  ctx.stroke();
+
+  ctx.font = 'bold 10px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let deg = -90; deg <= 90; deg += 10) {
+    if (deg === 0) continue;
+    const y = cy + pitchOffset - deg * 2;
+    const len = (deg % 20 === 0) ? 30 : 15;
+    ctx.beginPath();
+    ctx.moveTo(cx - len, y);
+    ctx.lineTo(cx + len, y);
+    ctx.stroke();
+    if (deg % 20 === 0) {
+      ctx.fillText(Math.abs(deg), cx - len - 12, y);
+      ctx.fillText(Math.abs(deg), cx + len + 12, y);
+    }
+  }
+
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#2a2a35';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.strokeStyle = '#ffcc00';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-40, 0); ctx.lineTo(-15, 0);
+  ctx.moveTo(15, 0); ctx.lineTo(40, 0);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(0, 0, 3, 0, 2 * Math.PI);
+  ctx.fillStyle = '#ffcc00';
+  ctx.fill();
+  ctx.restore();
+}
+
+// ============ G-FORCE ============
+function startAccelerometer() {
+  const handler = (e) => {
+    // accelerationIncludingGravity: m/s² con gravità inclusa
+    // Convenzione: X destra, Y alto, Z verso l'utente
+    let x = e.accelerationIncludingGravity?.x;
+    let y = e.accelerationIncludingGravity?.y;
+    let z = e.accelerationIncludingGravity?.z;
+
+    // Fallback: alcuni browser usano acceleration
+    if (x == null) x = e.acceleration?.x || 0;
+    if (y == null) y = e.acceleration?.y || 0;
+    if (z == null) z = e.acceleration?.z || 0;
+
+    accelX = x;
+    accelY = y;
+    accelZ = z;
+
+    updateGForce();
+  };
+
+  if (typeof DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function') {
+    // iOS: chiederà il permesso quando apri Telemetria
+    window._motionPermissionNeeded = true;
+  } else {
+    window.addEventListener('devicemotion', handler, true);
+    hasAccelPermission = true;
+  }
+}
+
+function updateGForce() {
+  // Converti in g (1g = 9.81 m/s²)
+  const gx = accelX / 9.81;
+  const gy = accelY / 9.81;
+  const gz = accelZ / 9.81;
+
+  // In auto con telefono in verticale (schermo verso l'alto):
+  //   Y = longitudinale (positivo = frenata, negativo = accelerazione)
+  //   X = laterale (positivo = curva a destra, negativo = curva a sinistra)
+  //   Z = verticale (≈ -1g a riposo perché la gravità "spinge" verso il basso)
+  //
+  // Noi mostriamo valori assoluti "esperiti dal guidatore":
+  //   Laterale = gx
+  //   Longitudinale = gy
+  //   Verticale = gz (assoluto, tolta gravità)
+
+  const lateral = gx;
+  const longitudinal = gy;
+  const vertical = gz;
+
+  // Aggiorna valori numerici
+  gforceX.textContent = (lateral >= 0 ? '+' : '') + lateral.toFixed(2);
+  gforceY.textContent = (longitudinal >= 0 ? '+' : '') + longitudinal.toFixed(2);
+  gforceZ.textContent = (vertical >= 0 ? '+' : '') + vertical.toFixed(2);
+
+  // Colore del valore in base all'intensità
+  const setColor = (el, val) => {
+    el.classList.remove('medium', 'high');
+    const abs = Math.abs(val);
+    if (abs > 0.5) el.classList.add('high');
+    else if (abs > 0.25) el.classList.add('medium');
+  };
+  setColor(gforceX, lateral);
+  setColor(gforceY, longitudinal);
+  setColor(gforceZ, vertical);
+
+  // G-Force totale combinata (laterale + longitudinale)
+  const totalG = Math.sqrt(lateral * lateral + longitudinal * longitudinal);
+  gforceValue.textContent = totalG.toFixed(2) + 'g';
+
+  // Aggiorna picchi
+  if (Math.abs(lateral) > Math.abs(peakLatVal)) peakLatVal = lateral;
+  if (Math.abs(longitudinal) > Math.abs(peakLonVal)) peakLonVal = longitudinal;
+  if (totalG > peakTotalVal) peakTotalVal = totalG;
+  peakLat.textContent = (peakLatVal >= 0 ? '+' : '') + peakLatVal.toFixed(2) + ' g';
+  peakLon.textContent = (peakLonVal >= 0 ? '+' : '') + peakLonVal.toFixed(2) + ' g';
+  peakTotal.textContent = peakTotalVal.toFixed(2) + ' g';
+
+  // Aggiorna posizione del pallino nel grafico circolare
+  // Range visivo: ±1.5g
+  const maxG = 1.5;
+  const rangePct = 45; // % dal centro
+  const xPct = 50 + Math.max(-rangePct, Math.min(rangePct, (lateral / maxG) * rangePct));
+  const yPct = 50 - Math.max(-rangePct, Math.min(rangePct, (longitudinal / maxG) * rangePct));
+
+  gforceDot.style.transform = `translate(calc(-50% + ${xPct - 50}% * 2.6), calc(-50% + ${yPct - 50}% * 2.6))`;
+
+  // Colore del pallino in base al totalG
+  gforceDot.classList.remove('medium', 'high');
+  if (totalG > 0.7) gforceDot.classList.add('high');
+  else if (totalG > 0.35) gforceDot.classList.add('medium');
+}
+
+// Reset picchi
+resetPeak.addEventListener('click', () => {
+  peakLatVal = 0;
+  peakLonVal = 0;
+  peakTotalVal = 1.0;
+  peakLat.textContent = '0.00 g';
+  peakLon.textContent = '0.00 g';
+  peakTotal.textContent = '1.00 g';
+});
+
+// ============ CALIBRAZIONE ============
+calibraBtn.addEventListener('click', () => {
+  if (currentBeta == null || currentGamma == null) {
+    alert('Sensori di orientamento non disponibili.');
+    return;
+  }
+  calibOffsetBeta = currentBeta;
+  calibOffsetGamma = currentGamma;
+
+  try {
+    localStorage.setItem(CALIB_KEY, JSON.stringify({
+      beta: calibOffsetBeta,
+      gamma: calibOffsetGamma
+    }));
+  } catch {}
+
+  calibraBtn.textContent = '✅ Azzerato!';
+  calibraBtn.classList.add('active');
+  calibStatus.textContent = '📐 Calibrato ' + new Date().toLocaleTimeString('it-IT');
+  calibStatus.style.color = '#4ade80';
+
+  setTimeout(() => {
+    calibraBtn.textContent = '🎯 Azzera inclinometro';
+    calibraBtn.classList.remove('active');
+  }, 1500);
+
+  updateHorizon();
+  updateInclineBubble();
+});
+
+// ============ BUSSOLA ============
+function drawCompass(heading) {
+  const ctx = compassCanvas.getContext('2d');
+  const w = 200, h = 200, cx = 100, cy = 100, r = 85;
+  ctx.clearRect(0, 0, w, h);
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#2a2a35';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillStyle = '#aaa';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const dirs = ['N', 'E', 'S', 'W'];
+  for (let i = 0; i < 360; i += 30) {
+    const rad = (i - 90) * Math.PI / 180;
+    const x1 = cx + Math.cos(rad) * (r - 8);
+    const y1 = cy + Math.sin(rad) * (r - 8);
+    const x2 = cx + Math.cos(rad) * r;
+    const y2 = cy + Math.sin(rad) * r;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = i % 90 === 0 ? '#4a7dff' : '#444';
+    ctx.lineWidth = i % 90 === 0 ? 3 : 2;
+    ctx.stroke();
+    if (i % 90 === 0) {
+      const tx = cx + Math.cos(rad) * (r - 20);
+      const ty = cy + Math.sin(rad) * (r - 20);
+      ctx.fillStyle = i === 0 ? '#ff5555' : '#fff';
+      ctx.fillText(dirs[i / 90], tx, ty);
+    }
+  }
+
+  const rad = (heading - 90) * Math.PI / 180;
+  const nx = cx + Math.cos(rad) * (r - 25);
+  const ny = cy + Math.sin(rad) * (r - 25);
+
+  ctx.beginPath();
+  ctx.moveTo(nx, ny);
+  ctx.lineTo(cx + Math.cos(rad + 2.5) * 12, cy + Math.sin(rad + 2.5) * 12);
+  ctx.lineTo(cx + Math.cos(rad - 2.5) * 12, cy + Math.sin(rad - 2.5) * 12);
+  ctx.closePath();
+  ctx.fillStyle = '#ff5555';
+  ctx.fill();
+
+  const sx = cx - Math.cos(rad) * 20;
+  const sy = cy - Math.sin(rad) * 20;
+  ctx.beginPath();
+  ctx.moveTo(sx, sy);
+  ctx.lineTo(cx + Math.cos(rad + Math.PI + 2.5) * 12, cy + Math.sin(rad + Math.PI + 2.5) * 12);
+  ctx.lineTo(cx + Math.cos(rad + Math.PI - 2.5) * 12, cy + Math.sin(rad + Math.PI - 2.5) * 12);
+  ctx.closePath();
+  ctx.fillStyle = '#4a7dff';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+
+  ctx.font = 'bold 20px sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(Math.round(heading) + '°', cx, cy + 45);
+}
+
+// ============ SENSORI ORIENTAMENTO ============
+function startOrientation() {
+  const handler = (e) => {
+    if (e.beta != null) currentBeta = e.beta;
+    if (e.gamma != null) currentGamma = e.gamma;
+    if (e.webkitCompassHeading != null) currentHeading = e.webkitCompassHeading;
+    else if (e.alpha != null && currentHeading == null) currentHeading = 360 - e.alpha;
+    updateHorizon();
+    updateInclineBubble();
+  };
+
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    window._orientationPermissionNeeded = true;
+  } else {
+    window.addEventListener('deviceorientation', handler, true);
+  }
+}
+
+function updateInclineBubble() {
+  if (currentBeta == null || currentGamma == null) return;
+  const beta = currentBeta - calibOffsetBeta;
+  const gamma = currentGamma - calibOffsetGamma;
+  const range = 70;
+  const x = Math.max(-range, Math.min(range, (gamma / 90) * range));
+  const y = Math.max(-range, Math.min(range, (beta / 90) * range));
+  inclineBubble.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+}
+
+// ============ BATTERIA / NETWORK ============
+async function updateBattery() {
+  if (!navigator.getBattery) {
+    $('cardBattery').style.opacity = '0.35';
+    return;
+  }
+  try {
+    const battery = await navigator.getBattery();
+    const update = () => { tBattery.innerHTML = Math.round(battery.level * 100) + '<span style="font-size:14px;color:#888;margin-left:4px">%</span>'; };
+    update();
+    battery.addEventListener('levelchange', update);
+  } catch {
+    $('cardBattery').style.opacity = '0.35';
+  }
+}
+
+function updateNetwork() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (!conn) { $('cardNetwork').style.opacity = '0.35'; return; }
+  const update = () => { tNetwork.textContent = (conn.effectiveType || conn.type || 'N/D').toUpperCase(); };
+  update();
+  conn.addEventListener?.('change', update);
 }
 
 // ============ METEO ============
@@ -671,164 +1272,6 @@ function weatherEmoji(code) {
   return '🌡️';
 }
 
-// ============ BUSSOLA (canvas) ============
-function drawCompass(heading) {
-  const ctx = compassCanvas.getContext('2d');
-  const w = 200, h = 200, cx = 100, cy = 100, r = 85;
-  ctx.clearRect(0, 0, w, h);
-
-  // Cerchio esterno
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-  ctx.strokeStyle = '#2a2a35';
-  ctx.lineWidth = 4;
-  ctx.stroke();
-
-  // Tacche per ogni 30°
-  ctx.font = 'bold 14px sans-serif';
-  ctx.fillStyle = '#aaa';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const dirs = ['N', 'E', 'S', 'W'];
-  for (let i = 0; i < 360; i += 30) {
-    const rad = (i - 90) * Math.PI / 180;
-    const x1 = cx + Math.cos(rad) * (r - 8);
-    const y1 = cy + Math.sin(rad) * (r - 8);
-    const x2 = cx + Math.cos(rad) * r;
-    const y2 = cy + Math.sin(rad) * r;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.strokeStyle = i % 90 === 0 ? '#4a7dff' : '#444';
-    ctx.lineWidth = i % 90 === 0 ? 3 : 2;
-    ctx.stroke();
-    if (i % 90 === 0) {
-      const tx = cx + Math.cos(rad) * (r - 20);
-      const ty = cy + Math.sin(rad) * (r - 20);
-      ctx.fillStyle = i === 0 ? '#ff5555' : '#fff';
-      ctx.fillText(dirs[i / 90], tx, ty);
-    }
-  }
-
-  // Ago
-  const rad = (heading - 90) * Math.PI / 180;
-  const nx = cx + Math.cos(rad) * (r - 25);
-  const ny = cy + Math.sin(rad) * (r - 25);
-  const sx = cx - Math.cos(rad) * 20;
-  const sy = cy - Math.sin(rad) * 20;
-
-  ctx.beginPath();
-  ctx.moveTo(nx, ny);
-  ctx.lineTo(cx + Math.cos(rad + 2.5) * 12, cy + Math.sin(rad + 2.5) * 12);
-  ctx.lineTo(cx + Math.cos(rad - 2.5) * 12, cy + Math.sin(rad - 2.5) * 12);
-  ctx.closePath();
-  ctx.fillStyle = '#ff5555';
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(sx, sy);
-  ctx.lineTo(cx + Math.cos(rad + Math.PI + 2.5) * 12, cy + Math.sin(rad + Math.PI + 2.5) * 12);
-  ctx.lineTo(cx + Math.cos(rad + Math.PI - 2.5) * 12, cy + Math.sin(rad + Math.PI - 2.5) * 12);
-  ctx.closePath();
-  ctx.fillStyle = '#4a7dff';
-  ctx.fill();
-
-  // Centro
-  ctx.beginPath();
-  ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
-  ctx.fillStyle = '#fff';
-  ctx.fill();
-
-  // Testo gradi
-  ctx.font = 'bold 20px sans-serif';
-  ctx.fillStyle = '#fff';
-  ctx.fillText(Math.round(heading) + '°', cx, cy + 45);
-}
-
-// ============ INCLINOMETRO / SENSORI ============
-function startOrientation() {
-  const handler = (e) => {
-    // beta = inclinazione frontale (-180..180)
-    // gamma = inclinazione laterale (-90..90)
-    // alpha = direzione bussola (0..360)
-    if (e.beta != null) {
-      currentBeta = e.beta;
-      tBeta.innerHTML = e.beta.toFixed(0) + '<span class="telem-unit">°</span>';
-      $('cardBeta').classList.remove('disabled');
-    }
-    if (e.gamma != null) {
-      currentGamma = e.gamma;
-      tGamma.innerHTML = e.gamma.toFixed(0) + '<span class="telem-unit">°</span>';
-      $('cardGamma').classList.remove('disabled');
-    }
-    // Se il device fornisce la direzione bussola (alpha), usala se manca heading GPS
-    if (e.webkitCompassHeading != null) {
-      currentHeading = e.webkitCompassHeading;
-      tHeading.innerHTML = currentHeading.toFixed(0) + '<span class="telem-unit">°</span>';
-      drawCompass(currentHeading);
-    } else if (e.alpha != null && currentHeading == null) {
-      currentHeading = 360 - e.alpha;
-      tHeading.innerHTML = currentHeading.toFixed(0) + '<span class="telem-unit">°</span>';
-      drawCompass(currentHeading);
-    }
-
-    // Aggiorna bolla inclinometro
-    updateInclineBubble();
-  };
-
-  // iOS 13+ richiede il permesso
-  if (typeof DeviceOrientationEvent !== 'undefined' &&
-      typeof DeviceOrientationEvent.requestPermission === 'function') {
-    // Chiedi permesso al primo tap sul pulsante telemetria
-    window._orientationPermissionNeeded = true;
-  } else {
-    window.addEventListener('deviceorientation', handler, true);
-  }
-}
-
-function updateInclineBubble() {
-  if (currentBeta == null || currentGamma == null) return;
-  // Mappa beta (-90..90) e gamma (-90..90) in pixel (-70..70)
-  const maxTilt = 90;
-  const range = 70;
-  const x = Math.max(-range, Math.min(range, (currentGamma / maxTilt) * range));
-  const y = Math.max(-range, Math.min(range, (currentBeta / maxTilt) * range));
-  inclineBubble.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-}
-
-// ============ BATTERIA ============
-async function updateBattery() {
-  if (!navigator.getBattery) {
-    $('cardBattery').classList.add('disabled');
-    return;
-  }
-  try {
-    const battery = await navigator.getBattery();
-    const update = () => {
-      tBattery.innerHTML = Math.round(battery.level * 100) + '<span class="telem-unit">%</span>';
-    };
-    update();
-    battery.addEventListener('levelchange', update);
-  } catch {
-    $('cardBattery').classList.add('disabled');
-  }
-}
-
-// ============ NETWORK ============
-function updateNetwork() {
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (!conn) {
-    $('cardNetwork').classList.add('disabled');
-    return;
-  }
-  const update = () => {
-    const type = conn.effectiveType || conn.type || 'sconosciuta';
-    tNetwork.textContent = type.toUpperCase();
-  };
-  update();
-  conn.addEventListener?.('change', update);
-}
-
 // ============ TRAFFICO ============
 trafficBtn.addEventListener('click', () => {
   if (!coordsOk || !currentLat || !currentLon) {
@@ -852,44 +1295,49 @@ closeTrafficBtn.addEventListener('click', () => {
 telemBtn.addEventListener('click', async () => {
   telemOverlay.classList.add('visible');
 
-  // Richiedi permesso sensori su iOS 13+
+  // Permesso orientamento (iOS)
   if (typeof DeviceOrientationEvent !== 'undefined' &&
       typeof DeviceOrientationEvent.requestPermission === 'function') {
     try {
       const perm = await DeviceOrientationEvent.requestPermission();
       if (perm === 'granted') {
         window.addEventListener('deviceorientation', (e) => {
-          if (e.beta != null) {
-            currentBeta = e.beta;
-            tBeta.innerHTML = e.beta.toFixed(0) + '<span class="telem-unit">°</span>';
-            $('cardBeta').classList.remove('disabled');
-          }
-          if (e.gamma != null) {
-            currentGamma = e.gamma;
-            tGamma.innerHTML = e.gamma.toFixed(0) + '<span class="telem-unit">°</span>';
-            $('cardGamma').classList.remove('disabled');
-          }
-          if (e.webkitCompassHeading != null) {
-            currentHeading = e.webkitCompassHeading;
-            tHeading.innerHTML = currentHeading.toFixed(0) + '<span class="telem-unit">°</span>';
-            drawCompass(currentHeading);
-          }
+          if (e.beta != null) currentBeta = e.beta;
+          if (e.gamma != null) currentGamma = e.gamma;
+          if (e.webkitCompassHeading != null) currentHeading = e.webkitCompassHeading;
+          updateHorizon();
           updateInclineBubble();
         }, true);
-      } else {
-        $('cardBeta').classList.add('disabled');
-        $('cardGamma').classList.add('disabled');
       }
-    } catch {
-      $('cardBeta').classList.add('disabled');
-      $('cardGamma').classList.add('disabled');
-    }
+    } catch {}
   }
 
-  // Aggiorna subito i valori correnti
+  // Permesso accelerometro (iOS)
+  if (typeof DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function') {
+    try {
+      const perm = await DeviceMotionEvent.requestPermission();
+      if (perm === 'granted') {
+        window.addEventListener('devicemotion', (e) => {
+          let x = e.accelerationIncludingGravity?.x;
+          let y = e.accelerationIncludingGravity?.y;
+          let z = e.accelerationIncludingGravity?.z;
+          if (x == null) x = e.acceleration?.x || 0;
+          if (y == null) y = e.acceleration?.y || 0;
+          if (z == null) z = e.acceleration?.z || 0;
+          accelX = x; accelY = y; accelZ = z;
+          updateGForce();
+        }, true);
+      }
+    } catch {}
+  }
+
   updateTelemetry();
-  if (currentHeading != null) drawCompass(currentHeading);
+  updateAltimeter();
+  updateHorizon();
   updateInclineBubble();
+  updateGForce();
+  if (currentHeading != null) drawCompass(currentHeading);
   updateBattery();
   updateNetwork();
 });
@@ -1071,7 +1519,6 @@ function openPlayer(channel) {
   playerOverlay.classList.add('visible');
   renderMenu(channel);
   startStream(channel.url);
-  // Mostra overlay GPS se ci sono dati
   if (gpsInfo.classList.contains('visible')) {
     gpsOverlay.classList.add('visible');
   }
@@ -1131,6 +1578,7 @@ setView(viewMode);
 loadPlaylist();
 startGps();
 startOrientation();
+startAccelerometer();
 </script>
 
 </body>
