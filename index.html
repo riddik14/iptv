@@ -22,32 +22,34 @@
   .top-bar .title { font-size: 16px; font-weight: 700; }
   .gps-info {
     display: none;
-    align-items: center; gap: 12px;
+    align-items: center; gap: 20px;
     background: #1a1a22; border: 1px solid #2a2a35;
-    padding: 6px 12px; border-radius: 10px;
-    font-size: 13px; white-space: nowrap;
+    padding: 10px 18px; border-radius: 12px;
+    white-space: nowrap;
   }
   .gps-info.visible { display: flex; }
-  .gps-item { display: flex; align-items: center; gap: 4px; }
-  .gps-item .icon { font-size: 15px; }
-  .gps-item .val { font-weight: 700; }
-  .gps-item .lbl { color: #888; font-size: 11px; }
+  .gps-item { display: flex; align-items: center; gap: 6px; }
+  .gps-item .icon { font-size: 32px; }
+  .gps-item .val { font-weight: 800; font-size: 32px; line-height: 1; }
+  .gps-item .lbl { color: #888; font-size: 16px; }
+
   .weather-info {
     display: none;
-    align-items: center; gap: 6px;
+    align-items: center; gap: 8px;
     background: #1a1a22; border: 1px solid #2a2a35;
-    padding: 6px 12px; border-radius: 10px;
-    font-size: 13px; white-space: nowrap;
+    padding: 10px 18px; border-radius: 12px;
+    white-space: nowrap;
   }
   .weather-info.visible { display: flex; }
-  .weather-info .w-icon { font-size: 18px; }
-  .weather-info .w-temp { font-weight: 700; }
-  .traffic-btn {
+  .weather-info .w-icon { font-size: 32px; }
+  .weather-info .w-temp { font-weight: 800; font-size: 32px; }
+
+  .icon-btn {
     background: #2a2a35; border: none; color: #fff;
-    padding: 8px 14px; border-radius: 10px;
-    font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 10px 16px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
   }
-  .traffic-btn:hover { background: #3a3a48; }
+  .icon-btn:hover { background: #3a3a48; }
   .view-btn {
     background: #4a7dff; border: none; color: #fff;
     padding: 10px 18px; border-radius: 10px;
@@ -60,7 +62,7 @@
   #status.error { color: #ff5555; }
   #status.success { color: #4ade80; }
 
-  /* VISTA GRIGLIA */
+  /* GRIGLIA */
   #channels {
     display: grid; grid-template-columns: repeat(4, 1fr);
     gap: 8px; padding: 10px;
@@ -123,26 +125,119 @@
   button.action:hover { background: #3a6bef; }
   button.action:disabled { background: #333; cursor: not-allowed; }
 
-  /* MODALE TRAFFICO */
-  #trafficOverlay {
+  /* OVERLAY GPS nel player */
+  .gps-overlay {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    align-items: center;
+    gap: 20px;
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px 22px;
+    border-radius: 14px;
+    z-index: 20;
+    pointer-events: none;
+    backdrop-filter: blur(6px);
+  }
+  .gps-overlay.visible { display: flex; }
+  .gps-overlay .gps-item { display: flex; align-items: center; gap: 6px; }
+  .gps-overlay .gps-item .icon { font-size: 28px; }
+  .gps-overlay .gps-item .val { font-weight: 800; font-size: 28px; line-height: 1; }
+  .gps-overlay .gps-item .lbl { color: #bbb; font-size: 14px; }
+
+  /* MODALI */
+  .modal {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.9); z-index: 2000;
     flex-direction: column;
   }
-  #trafficOverlay.visible { display: flex; }
-  .traffic-header {
+  .modal.visible { display: flex; }
+  .modal-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 18px; background: #111;
     border-bottom: 1px solid #222;
   }
-  .traffic-header .traffic-title { font-size: 16px; font-weight: 700; }
-  .traffic-header .close-traffic {
+  .modal-header .modal-title { font-size: 16px; font-weight: 700; }
+  .close-modal {
     background: #2a2a35; border: none; color: #fff;
     width: 40px; height: 40px; border-radius: 10px;
     font-size: 20px; cursor: pointer;
   }
-  .traffic-body { flex: 1; }
-  .traffic-body iframe { width: 100%; height: 100%; border: 0; }
+  .modal-body { flex: 1; overflow: auto; }
+  .modal-body iframe { width: 100%; height: 100%; border: 0; }
+
+  /* TELEMETRIA */
+  .telem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    padding: 20px;
+  }
+  .telem-card {
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 130px;
+  }
+  .telem-card .telem-icon { font-size: 36px; margin-bottom: 8px; }
+  .telem-card .telem-value {
+    font-size: 32px; font-weight: 800; line-height: 1;
+    color: #4a7dff;
+  }
+  .telem-card .telem-unit { font-size: 14px; color: #888; margin-left: 4px; }
+  .telem-card .telem-label {
+    font-size: 12px; color: #888; margin-top: 6px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .telem-card.wide { grid-column: span 2; }
+  .telem-card.disabled { opacity: 0.35; }
+  .telem-card.disabled .telem-value { color: #555; }
+
+  /* Bussola canvas */
+  .compass-wrap { display: flex; justify-content: center; padding: 20px; }
+  #compassCanvas {
+    width: 200px; height: 200px;
+  }
+
+  /* Inclinometro */
+  .incline-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  .incline-viz {
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: #1a1a22;
+    border: 2px solid #2a2a35;
+    position: relative;
+    overflow: hidden;
+  }
+  .incline-bubble {
+    width: 40px; height: 40px;
+    background: #4a7dff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+    box-shadow: 0 0 20px rgba(74,125,255,0.6);
+  }
+  .incline-crosshair {
+    position: absolute;
+    background: #2a2a35;
+  }
+  .incline-crosshair.h { width: 100%; height: 1px; top: 50%; }
+  .incline-crosshair.v { height: 100%; width: 1px; left: 50%; }
 
   /* PLAYER */
   #playerOverlay {
@@ -150,7 +245,6 @@
     background: #000; z-index: 1000; flex-direction: column;
   }
   #playerOverlay.visible { display: flex; }
-
   .player-header {
     display: flex; align-items: center; gap: 16px;
     padding: 18px 22px; background: #111;
@@ -173,7 +267,7 @@
   .close-btn { font-size: 30px; }
 
   .player-body { flex: 1; display: flex; min-height: 0; position: relative; }
-  .video-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: #000; }
+  .video-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: #000; position: relative; }
   video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
   /* MENU PLAYER */
@@ -181,7 +275,7 @@
     width: 420px; background: #111; border-left: 1px solid #222;
     display: flex; flex-direction: column;
     transform: translateX(100%); transition: transform 0.25s ease;
-    position: absolute; right: 0; top: 0; bottom: 0; z-index: 10;
+    position: absolute; right: 0; top: 0; bottom: 0; z-index: 30;
   }
   #channelMenu.visible { transform: translateX(0); }
   .menu-header {
@@ -195,7 +289,7 @@
     width: 34px; height: 34px; border-radius: 8px;
     font-size: 18px; cursor: pointer;
   }
-  .menu-list { flex: 1; overflow-y: auto; padding: 6px; -webkit-overflow-scrolling: touch; }
+  .menu-list { flex: 1; overflow-y: auto; padding: 6px; }
   .menu-item {
     display: flex; align-items: center; gap: 10px;
     padding: 10px; border-radius: 8px; cursor: pointer;
@@ -240,12 +334,12 @@
     <span class="w-icon" id="wIcon">☀️</span>
     <span class="w-temp" id="wTemp">--°</span>
   </div>
-  <button class="traffic-btn" id="trafficBtn">🚦 Traffico</button>
+  <button class="icon-btn" id="telemBtn">📊 Telemetria</button>
+  <button class="icon-btn" id="trafficBtn">🚦 Traffico</button>
   <button class="view-btn" id="viewBtn">📋 Lista</button>
 </div>
 
 <div id="status"></div>
-
 <div id="channels"></div>
 <div id="timeline"></div>
 
@@ -254,12 +348,91 @@
 </div>
 
 <!-- MODALE TRAFFICO -->
-<div id="trafficOverlay">
-  <div class="traffic-header">
-    <div class="traffic-title">🚦 Traffico in tempo reale</div>
-    <button class="close-traffic" id="closeTrafficBtn">✕</button>
+<div class="modal" id="trafficOverlay">
+  <div class="modal-header">
+    <div class="modal-title">🚦 Traffico in tempo reale</div>
+    <button class="close-modal" id="closeTrafficBtn">✕</button>
   </div>
-  <div class="traffic-body" id="trafficBody"></div>
+  <div class="modal-body" id="trafficBody"></div>
+</div>
+
+<!-- MODALE TELEMETRIA -->
+<div class="modal" id="telemOverlay">
+  <div class="modal-header">
+    <div class="modal-title">📊 Telemetria</div>
+    <button class="close-modal" id="closeTelemBtn">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="telem-grid">
+      <div class="telem-card" id="cardSpeed">
+        <div class="telem-icon">🚗</div>
+        <div class="telem-value" id="tSpeed">--<span class="telem-unit">km/h</span></div>
+        <div class="telem-label">Velocità</div>
+      </div>
+      <div class="telem-card" id="cardAlt">
+        <div class="telem-icon">⛰️</div>
+        <div class="telem-value" id="tAlt">--<span class="telem-unit">m</span></div>
+        <div class="telem-label">Altitudine</div>
+      </div>
+      <div class="telem-card" id="cardHeading">
+        <div class="telem-icon">🧭</div>
+        <div class="telem-value" id="tHeading">--<span class="telem-unit">°</span></div>
+        <div class="telem-label">Direzione GPS</div>
+      </div>
+      <div class="telem-card" id="cardAccuracy">
+        <div class="telem-icon">🎯</div>
+        <div class="telem-value" id="tAccuracy">--<span class="telem-unit">m</span></div>
+        <div class="telem-label">Precisione</div>
+      </div>
+      <div class="telem-card" id="cardLat">
+        <div class="telem-icon">📍</div>
+        <div class="telem-value" id="tLat" style="font-size:18px">--</div>
+        <div class="telem-label">Latitudine</div>
+      </div>
+      <div class="telem-card" id="cardLon">
+        <div class="telem-icon">📍</div>
+        <div class="telem-value" id="tLon" style="font-size:18px">--</div>
+        <div class="telem-label">Longitudine</div>
+      </div>
+    </div>
+
+    <div class="compass-wrap">
+      <canvas id="compassCanvas" width="200" height="200"></canvas>
+    </div>
+    <div style="text-align:center;color:#888;font-size:12px;margin-top:-10px">Bussola (DeviceOrientation)</div>
+
+    <div class="incline-wrap">
+      <div class="incline-viz">
+        <div class="incline-crosshair h"></div>
+        <div class="incline-crosshair v"></div>
+        <div class="incline-bubble" id="inclineBubble"></div>
+      </div>
+    </div>
+    <div style="text-align:center;color:#888;font-size:12px">Inclinometro (beta / gamma)</div>
+
+    <div class="telem-grid">
+      <div class="telem-card" id="cardBeta">
+        <div class="telem-icon">↕️</div>
+        <div class="telem-value" id="tBeta">--<span class="telem-unit">°</span></div>
+        <div class="telem-label">Inclinazione frontale (β)</div>
+      </div>
+      <div class="telem-card" id="cardGamma">
+        <div class="telem-icon">↔️</div>
+        <div class="telem-value" id="tGamma">--<span class="telem-unit">°</span></div>
+        <div class="telem-label">Inclinazione laterale (γ)</div>
+      </div>
+      <div class="telem-card" id="cardBattery">
+        <div class="telem-icon">🔋</div>
+        <div class="telem-value" id="tBattery">--<span class="telem-unit">%</span></div>
+        <div class="telem-label">Batteria</div>
+      </div>
+      <div class="telem-card" id="cardNetwork">
+        <div class="telem-icon">📡</div>
+        <div class="telem-value" id="tNetwork" style="font-size:20px">--</div>
+        <div class="telem-label">Connessione</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- PLAYER -->
@@ -275,6 +448,19 @@
   <div class="player-body">
     <div class="video-wrap">
       <video id="videoEl" controls playsinline autoplay></video>
+      <!-- OVERLAY GPS CENTRATO NEL PLAYER -->
+      <div class="gps-overlay" id="gpsOverlay">
+        <div class="gps-item" id="gpsOverlaySpeed">
+          <span class="icon">🚗</span>
+          <span class="val" id="ovSpeedVal">--</span>
+          <span class="lbl">km/h</span>
+        </div>
+        <div class="gps-item" id="gpsOverlayAlt">
+          <span class="icon">⛰️</span>
+          <span class="val" id="ovAltVal">--</span>
+          <span class="lbl">m</span>
+        </div>
+      </div>
     </div>
     <div id="channelMenu">
       <div class="menu-header">
@@ -289,7 +475,7 @@
 <script>
 // ============ CONFIG ============
 const PLAYLIST_URL = 'https://raw.githubusercontent.com/riddik14/iptv/main/playlist_italy.m3u';
-const STORAGE_KEY = 'iptv_playlist_v10';
+const STORAGE_KEY = 'iptv_playlist_v11';
 const VIEW_KEY = 'iptv_view_mode';
 const WEATHER_API = 'https://api.open-meteo.com/v1/forecast';
 
@@ -303,19 +489,29 @@ const closePlayerBtn = $('closePlayerBtn'), menuToggleBtn = $('menuToggleBtn');
 const channelMenu = $('channelMenu'), closeMenuBtn = $('closeMenuBtn'), menuList = $('menuList');
 const gpsInfo = $('gpsInfo'), gpsSpeed = $('gpsSpeed'), gpsAlt = $('gpsAlt');
 const speedVal = $('speedVal'), altVal = $('altVal');
+const gpsOverlay = $('gpsOverlay'), gpsOverlaySpeed = $('gpsOverlaySpeed'), gpsOverlayAlt = $('gpsOverlayAlt');
+const ovSpeedVal = $('ovSpeedVal'), ovAltVal = $('ovAltVal');
 const weatherInfo = $('weatherInfo'), wIcon = $('wIcon'), wTemp = $('wTemp');
 const trafficBtn = $('trafficBtn'), trafficOverlay = $('trafficOverlay');
 const trafficBody = $('trafficBody'), closeTrafficBtn = $('closeTrafficBtn');
+const telemBtn = $('telemBtn'), telemOverlay = $('telemOverlay'), closeTelemBtn = $('closeTelemBtn');
+// Telemetria fields
+const tSpeed = $('tSpeed'), tAlt = $('tAlt'), tHeading = $('tHeading'), tAccuracy = $('tAccuracy');
+const tLat = $('tLat'), tLon = $('tLon'), tBeta = $('tBeta'), tGamma = $('tGamma');
+const tBattery = $('tBattery'), tNetwork = $('tNetwork');
+const inclineBubble = $('inclineBubble');
+const compassCanvas = $('compassCanvas');
 
 // ============ STATO ============
 let allChannels = [], hls = null, currentChannel = null;
 let viewMode = localStorage.getItem(VIEW_KEY) || 'grid';
 let lastPos = null, lastTime = null;
-let gpsOk = false, coordsOk = false;
+let coordsOk = false;
 let currentLat = null, currentLon = null;
+let currentHeading = null;
+let currentBeta = null, currentGamma = null;
 
 // ============ UTILITÀ ============
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const placeholder = () => 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="60">' +
   '<rect width="80" height="60" fill="#ddd"/>' +
@@ -348,14 +544,13 @@ function startGps() {
       const c = pos.coords;
       const now = pos.timestamp;
 
-      // Coordinate: valide se lat/lon non null
       if (c.latitude != null && c.longitude != null) {
         coordsOk = true;
         currentLat = c.latitude;
         currentLon = c.longitude;
       }
 
-      // Velocità: prova API nativa, altrimenti calcola da haversine
+      // Velocità
       let speedKmh = null;
       if (c.speed != null && !isNaN(c.speed)) {
         speedKmh = c.speed * 3.6;
@@ -367,30 +562,44 @@ function startGps() {
         }
       }
 
-      // Altitudine: solo se il browser la fornisce (spesso null su WebView)
       const altitude = (c.altitude != null && !isNaN(c.altitude)) ? c.altitude : null;
+      const heading = (c.heading != null && !isNaN(c.heading)) ? c.heading : null;
+      const accuracy = c.accuracy != null ? c.accuracy : null;
+      if (heading != null) currentHeading = heading;
 
-      // Mostra dati solo se validi
+      // Barra superiore: mostra solo se dati validi
       let hasAny = false;
-      if (speedKmh != null && speedKmh >= 0 && speedKmh < 300) {
+      const speedOk = (speedKmh != null && speedKmh >= 0 && speedKmh < 300);
+      if (speedOk) {
         speedVal.textContent = speedKmh.toFixed(0);
+        ovSpeedVal.textContent = speedKmh.toFixed(0);
         gpsSpeed.style.display = 'flex';
+        gpsOverlaySpeed.style.display = 'flex';
         hasAny = true;
       } else {
         gpsSpeed.style.display = 'none';
+        gpsOverlaySpeed.style.display = 'none';
       }
-
       if (altitude != null) {
         altVal.textContent = altitude.toFixed(0);
+        ovAltVal.textContent = altitude.toFixed(0);
         gpsAlt.style.display = 'flex';
+        gpsOverlayAlt.style.display = 'flex';
         hasAny = true;
       } else {
         gpsAlt.style.display = 'none';
+        gpsOverlayAlt.style.display = 'none';
       }
 
-      if (hasAny) gpsInfo.classList.add('visible');
+      if (hasAny) {
+        gpsInfo.classList.add('visible');
+        gpsOverlay.classList.add('visible');
+      }
 
-      // Se ho le coordinate, carica meteo (una volta sola o ogni 10 min)
+      // Aggiorna telemetria se il pannello è aperto
+      updateTelemetry();
+
+      // Meteo
       if (coordsOk && currentLat && currentLon) {
         loadWeather(currentLat, currentLon);
       }
@@ -402,40 +611,50 @@ function startGps() {
       console.warn('GPS error:', err.message);
       gpsInfo.classList.remove('visible');
       weatherInfo.classList.remove('visible');
+      gpsOverlay.classList.remove('visible');
     },
     { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
   );
 }
 
-let weatherLoaded = false;
-let lastWeatherLat = null, lastWeatherLon = null;
+function updateTelemetry() {
+  // Sempre aggiornati se disponibili
+  if (speedVal.textContent !== '--') {
+    tSpeed.innerHTML = speedVal.textContent + '<span class="telem-unit">km/h</span>';
+  }
+  if (altVal.textContent !== '--') {
+    tAlt.innerHTML = altVal.textContent + '<span class="telem-unit">m</span>';
+  }
+  if (currentHeading != null) {
+    tHeading.innerHTML = currentHeading.toFixed(0) + '<span class="telem-unit">°</span>';
+    drawCompass(currentHeading);
+  }
+  if (lastPos) {
+    tLat.textContent = lastPos.lat.toFixed(5);
+    tLon.textContent = lastPos.lon.toFixed(5);
+  }
+  // Accuratezza non la salviamo ma la leggiamo dall'ultima pos
+}
+
+// ============ METEO ============
+let weatherLoaded = false, lastWeatherLat = null, lastWeatherLon = null;
 
 async function loadWeather(lat, lon) {
-  // Non ricaricare se già fatto per questa posizione (tolleranza 5km)
   if (weatherLoaded && lastWeatherLat && lastWeatherLon) {
-    const dist = haversine(lastWeatherLat, lastWeatherLon, lat, lon);
-    if (dist < 5000) return;
+    if (haversine(lastWeatherLat, lastWeatherLon, lat, lon) < 5000) return;
   }
-
   try {
     const url = `${WEATHER_API}?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const temp = Math.round(data.current.temperature_2m);
-    const code = data.current.weather_code;
-
-    wIcon.textContent = weatherEmoji(code);
-    wTemp.textContent = temp + '°C';
+    wIcon.textContent = weatherEmoji(data.current.weather_code);
+    wTemp.textContent = Math.round(data.current.temperature_2m) + '°C';
     weatherInfo.classList.add('visible');
-
     weatherLoaded = true;
     lastWeatherLat = lat;
     lastWeatherLon = lon;
-  } catch (err) {
-    console.warn('Weather failed:', err);
-    weatherInfo.classList.remove('visible');
-  }
+  } catch { weatherInfo.classList.remove('visible'); }
 }
 
 function weatherEmoji(code) {
@@ -443,19 +662,177 @@ function weatherEmoji(code) {
   if (code <= 2) return '🌤️';
   if (code === 3) return '☁️';
   if (code === 45 || code === 48) return '🌫️';
-  if (code >= 51 && code <= 57) return '🌦️';
-  if (code >= 61 && code <= 67) return '🌧️';
-  if (code >= 71 && code <= 77) return '🌨️';
-  if (code >= 80 && code <= 82) return '🌧️';
-  if (code >= 85 && code <= 86) return '❄️';
+  if (code <= 57) return '🌦️';
+  if (code <= 67) return '🌧️';
+  if (code <= 77) return '🌨️';
+  if (code <= 82) return '🌧️';
+  if (code <= 86) return '❄️';
   if (code >= 95) return '⛈️';
   return '🌡️';
 }
 
-// ============ TRAFFICO (Waze) ============
+// ============ BUSSOLA (canvas) ============
+function drawCompass(heading) {
+  const ctx = compassCanvas.getContext('2d');
+  const w = 200, h = 200, cx = 100, cy = 100, r = 85;
+  ctx.clearRect(0, 0, w, h);
+
+  // Cerchio esterno
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#2a2a35';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // Tacche per ogni 30°
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillStyle = '#aaa';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const dirs = ['N', 'E', 'S', 'W'];
+  for (let i = 0; i < 360; i += 30) {
+    const rad = (i - 90) * Math.PI / 180;
+    const x1 = cx + Math.cos(rad) * (r - 8);
+    const y1 = cy + Math.sin(rad) * (r - 8);
+    const x2 = cx + Math.cos(rad) * r;
+    const y2 = cy + Math.sin(rad) * r;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = i % 90 === 0 ? '#4a7dff' : '#444';
+    ctx.lineWidth = i % 90 === 0 ? 3 : 2;
+    ctx.stroke();
+    if (i % 90 === 0) {
+      const tx = cx + Math.cos(rad) * (r - 20);
+      const ty = cy + Math.sin(rad) * (r - 20);
+      ctx.fillStyle = i === 0 ? '#ff5555' : '#fff';
+      ctx.fillText(dirs[i / 90], tx, ty);
+    }
+  }
+
+  // Ago
+  const rad = (heading - 90) * Math.PI / 180;
+  const nx = cx + Math.cos(rad) * (r - 25);
+  const ny = cy + Math.sin(rad) * (r - 25);
+  const sx = cx - Math.cos(rad) * 20;
+  const sy = cy - Math.sin(rad) * 20;
+
+  ctx.beginPath();
+  ctx.moveTo(nx, ny);
+  ctx.lineTo(cx + Math.cos(rad + 2.5) * 12, cy + Math.sin(rad + 2.5) * 12);
+  ctx.lineTo(cx + Math.cos(rad - 2.5) * 12, cy + Math.sin(rad - 2.5) * 12);
+  ctx.closePath();
+  ctx.fillStyle = '#ff5555';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(sx, sy);
+  ctx.lineTo(cx + Math.cos(rad + Math.PI + 2.5) * 12, cy + Math.sin(rad + Math.PI + 2.5) * 12);
+  ctx.lineTo(cx + Math.cos(rad + Math.PI - 2.5) * 12, cy + Math.sin(rad + Math.PI - 2.5) * 12);
+  ctx.closePath();
+  ctx.fillStyle = '#4a7dff';
+  ctx.fill();
+
+  // Centro
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+
+  // Testo gradi
+  ctx.font = 'bold 20px sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(Math.round(heading) + '°', cx, cy + 45);
+}
+
+// ============ INCLINOMETRO / SENSORI ============
+function startOrientation() {
+  const handler = (e) => {
+    // beta = inclinazione frontale (-180..180)
+    // gamma = inclinazione laterale (-90..90)
+    // alpha = direzione bussola (0..360)
+    if (e.beta != null) {
+      currentBeta = e.beta;
+      tBeta.innerHTML = e.beta.toFixed(0) + '<span class="telem-unit">°</span>';
+      $('cardBeta').classList.remove('disabled');
+    }
+    if (e.gamma != null) {
+      currentGamma = e.gamma;
+      tGamma.innerHTML = e.gamma.toFixed(0) + '<span class="telem-unit">°</span>';
+      $('cardGamma').classList.remove('disabled');
+    }
+    // Se il device fornisce la direzione bussola (alpha), usala se manca heading GPS
+    if (e.webkitCompassHeading != null) {
+      currentHeading = e.webkitCompassHeading;
+      tHeading.innerHTML = currentHeading.toFixed(0) + '<span class="telem-unit">°</span>';
+      drawCompass(currentHeading);
+    } else if (e.alpha != null && currentHeading == null) {
+      currentHeading = 360 - e.alpha;
+      tHeading.innerHTML = currentHeading.toFixed(0) + '<span class="telem-unit">°</span>';
+      drawCompass(currentHeading);
+    }
+
+    // Aggiorna bolla inclinometro
+    updateInclineBubble();
+  };
+
+  // iOS 13+ richiede il permesso
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    // Chiedi permesso al primo tap sul pulsante telemetria
+    window._orientationPermissionNeeded = true;
+  } else {
+    window.addEventListener('deviceorientation', handler, true);
+  }
+}
+
+function updateInclineBubble() {
+  if (currentBeta == null || currentGamma == null) return;
+  // Mappa beta (-90..90) e gamma (-90..90) in pixel (-70..70)
+  const maxTilt = 90;
+  const range = 70;
+  const x = Math.max(-range, Math.min(range, (currentGamma / maxTilt) * range));
+  const y = Math.max(-range, Math.min(range, (currentBeta / maxTilt) * range));
+  inclineBubble.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+}
+
+// ============ BATTERIA ============
+async function updateBattery() {
+  if (!navigator.getBattery) {
+    $('cardBattery').classList.add('disabled');
+    return;
+  }
+  try {
+    const battery = await navigator.getBattery();
+    const update = () => {
+      tBattery.innerHTML = Math.round(battery.level * 100) + '<span class="telem-unit">%</span>';
+    };
+    update();
+    battery.addEventListener('levelchange', update);
+  } catch {
+    $('cardBattery').classList.add('disabled');
+  }
+}
+
+// ============ NETWORK ============
+function updateNetwork() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (!conn) {
+    $('cardNetwork').classList.add('disabled');
+    return;
+  }
+  const update = () => {
+    const type = conn.effectiveType || conn.type || 'sconosciuta';
+    tNetwork.textContent = type.toUpperCase();
+  };
+  update();
+  conn.addEventListener?.('change', update);
+}
+
+// ============ TRAFFICO ============
 trafficBtn.addEventListener('click', () => {
   if (!coordsOk || !currentLat || !currentLon) {
-    alert('Posizione GPS non disponibile. Il traffico richiede le coordinate.');
+    alert('Posizione GPS non disponibile.');
     return;
   }
   const iframe = document.createElement('iframe');
@@ -469,6 +846,56 @@ trafficBtn.addEventListener('click', () => {
 closeTrafficBtn.addEventListener('click', () => {
   trafficOverlay.classList.remove('visible');
   trafficBody.innerHTML = '';
+});
+
+// ============ TELEMETRIA ============
+telemBtn.addEventListener('click', async () => {
+  telemOverlay.classList.add('visible');
+
+  // Richiedi permesso sensori su iOS 13+
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      const perm = await DeviceOrientationEvent.requestPermission();
+      if (perm === 'granted') {
+        window.addEventListener('deviceorientation', (e) => {
+          if (e.beta != null) {
+            currentBeta = e.beta;
+            tBeta.innerHTML = e.beta.toFixed(0) + '<span class="telem-unit">°</span>';
+            $('cardBeta').classList.remove('disabled');
+          }
+          if (e.gamma != null) {
+            currentGamma = e.gamma;
+            tGamma.innerHTML = e.gamma.toFixed(0) + '<span class="telem-unit">°</span>';
+            $('cardGamma').classList.remove('disabled');
+          }
+          if (e.webkitCompassHeading != null) {
+            currentHeading = e.webkitCompassHeading;
+            tHeading.innerHTML = currentHeading.toFixed(0) + '<span class="telem-unit">°</span>';
+            drawCompass(currentHeading);
+          }
+          updateInclineBubble();
+        }, true);
+      } else {
+        $('cardBeta').classList.add('disabled');
+        $('cardGamma').classList.add('disabled');
+      }
+    } catch {
+      $('cardBeta').classList.add('disabled');
+      $('cardGamma').classList.add('disabled');
+    }
+  }
+
+  // Aggiorna subito i valori correnti
+  updateTelemetry();
+  if (currentHeading != null) drawCompass(currentHeading);
+  updateInclineBubble();
+  updateBattery();
+  updateNetwork();
+});
+
+closeTelemBtn.addEventListener('click', () => {
+  telemOverlay.classList.remove('visible');
 });
 
 // ============ PARSER M3U ============
@@ -499,7 +926,7 @@ function parseM3U(text) {
   return channels;
 }
 
-// ============ RENDER GRIGLIA ============
+// ============ RENDER ============
 function renderGrid() {
   channelsEl.innerHTML = '';
   const frag = document.createDocumentFragment();
@@ -517,33 +944,26 @@ function renderGrid() {
   channelsEl.appendChild(frag);
 }
 
-// ============ RENDER LISTA ============
 function renderTimeline() {
   if (viewMode !== 'list') return;
   timelineEl.innerHTML = '';
   const frag = document.createDocumentFragment();
-
   for (const ch of allChannels) {
     const row = document.createElement('div');
     row.className = 'timeline-row';
-
     row.appendChild(makeImg(ch.logo, ch.name, 'timeline-logo'));
-
     const info = document.createElement('div');
     info.className = 'timeline-info';
-
     const nameEl = document.createElement('div');
     nameEl.className = 'timeline-channel-name';
     nameEl.textContent = ch.name;
     info.appendChild(nameEl);
-
     if (ch.group) {
       const groupEl = document.createElement('div');
       groupEl.className = 'timeline-group';
       groupEl.textContent = ch.group;
       info.appendChild(groupEl);
     }
-
     row.appendChild(info);
     row.addEventListener('click', () => openPlayer(ch));
     frag.appendChild(row);
@@ -551,25 +971,19 @@ function renderTimeline() {
   timelineEl.appendChild(frag);
 }
 
-// ============ RENDER MENU PLAYER ============
 function renderMenu(activeChannel) {
   menuList.innerHTML = '';
   const frag = document.createDocumentFragment();
-
   for (const ch of allChannels) {
     const item = document.createElement('div');
     item.className = 'menu-item' + (ch.url === activeChannel.url ? ' active' : '');
-
     item.appendChild(makeImg(ch.logo, ch.name));
-
     const info = document.createElement('div');
     info.className = 'menu-info';
-
     const nameEl = document.createElement('div');
     nameEl.className = 'menu-name';
     nameEl.textContent = ch.name;
     info.appendChild(nameEl);
-
     item.appendChild(info);
     item.addEventListener('click', () => {
       startStream(ch.url);
@@ -580,16 +994,14 @@ function renderMenu(activeChannel) {
       item.classList.add('active');
       item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     });
-
     frag.appendChild(item);
   }
   menuList.appendChild(frag);
-
   const activeEl = menuList.querySelector('.menu-item.active');
   if (activeEl) setTimeout(() => activeEl.scrollIntoView({ block: 'center' }), 50);
 }
 
-// ============ CAMBIO VISTA ============
+// ============ VISTA ============
 function setView(mode) {
   viewMode = mode;
   localStorage.setItem(VIEW_KEY, mode);
@@ -598,12 +1010,9 @@ function setView(mode) {
   viewBtn.textContent = mode === 'list' ? '⊞ Griglia' : '📋 Lista';
   if (mode === 'list' && allChannels.length > 0) renderTimeline();
 }
+viewBtn.addEventListener('click', () => setView(viewMode === 'grid' ? 'list' : 'grid'));
 
-viewBtn.addEventListener('click', () => {
-  setView(viewMode === 'grid' ? 'list' : 'grid');
-});
-
-// ============ CARICAMENTO PLAYLIST ============
+// ============ PLAYLIST ============
 async function loadPlaylist(force = false) {
   refreshBtn.disabled = true;
   statusEl.className = '';
@@ -633,16 +1042,11 @@ async function loadPlaylist(force = false) {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
     if (!text.includes('#EXTINF')) throw new Error('File non valido');
-
     allChannels = parseM3U(text);
     if (!allChannels.length) throw new Error('Nessun canale');
-
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        savedAt: Date.now(), channels: allChannels
-      }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ savedAt: Date.now(), channels: allChannels }));
     } catch {}
-
     statusEl.className = 'success';
     statusEl.textContent = `✅ ${allChannels.length} canali`;
     renderGrid();
@@ -656,9 +1060,7 @@ async function loadPlaylist(force = false) {
 }
 
 refreshBtn.addEventListener('click', () => {
-  if (confirm('Ricaricare la lista dal server?')) {
-    loadPlaylist(true);
-  }
+  if (confirm('Ricaricare la lista dal server?')) loadPlaylist(true);
 });
 
 // ============ PLAYER ============
@@ -669,13 +1071,16 @@ function openPlayer(channel) {
   playerOverlay.classList.add('visible');
   renderMenu(channel);
   startStream(channel.url);
+  // Mostra overlay GPS se ci sono dati
+  if (gpsInfo.classList.contains('visible')) {
+    gpsOverlay.classList.add('visible');
+  }
 }
 
 function startStream(url) {
   if (hls) { hls.destroy(); hls = null; }
   videoEl.removeAttribute('src');
   videoEl.load();
-
   if (typeof Hls !== 'undefined' && Hls.isSupported()) {
     hls = new Hls({ lowLatencyMode: true, backBufferLength: 30, maxBufferLength: 30, enableWorker: true });
     hls.loadSource(url);
@@ -715,20 +1120,17 @@ menuToggleBtn.addEventListener('click', () => channelMenu.classList.toggle('visi
 closeMenuBtn.addEventListener('click', () => channelMenu.classList.remove('visible'));
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (trafficOverlay.classList.contains('visible')) {
-    trafficOverlay.classList.remove('visible');
-    trafficBody.innerHTML = '';
-  } else if (channelMenu.classList.contains('visible')) {
-    channelMenu.classList.remove('visible');
-  } else if (playerOverlay.classList.contains('visible')) {
-    closePlayer();
-  }
+  if (telemOverlay.classList.contains('visible')) telemOverlay.classList.remove('visible');
+  else if (trafficOverlay.classList.contains('visible')) { trafficOverlay.classList.remove('visible'); trafficBody.innerHTML = ''; }
+  else if (channelMenu.classList.contains('visible')) channelMenu.classList.remove('visible');
+  else if (playerOverlay.classList.contains('visible')) closePlayer();
 });
 
 // ============ START ============
 setView(viewMode);
 loadPlaylist();
 startGps();
+startOrientation();
 </script>
 
 </body>
