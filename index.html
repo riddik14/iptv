@@ -922,7 +922,7 @@ function drawHorizon(pitch, roll) {
   ctx.clip();
 
   ctx.translate(cx, cy);
-  ctx.rotate(roll * Math.PI / 180);
+  ctx.rotate(-roll * Math.PI / 180);
   ctx.translate(-cx, -cy);
 
   const pitchOffset = pitch * 2;
