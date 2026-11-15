@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>IPTV</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f0f13; color: #fff; min-height: 100vh; overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 60px);
+  }
+
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; background: #111;
+    border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 50;
+    gap: 8px; flex-wrap: wrap;
+    min-height: 48px;
+  }
+  .top-bar .title { font-size: 15px; font-weight: 700; }
+
+  .icon-btn {
+    background: #2a2a35; border: none; color: #fff;
+    padding: 8px 14px; border-radius: 10px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    white-space: nowrap;
+  }
+  .icon-btn:hover { background: #3a3a48; }
+  .view-btn {
+    background: #4a7dff; border: none; color: #fff;
+    padding: 8px 16px; border-radius: 10px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    white-space: nowrap;
+  }
+  .view-btn:hover { background: #3a6bef; }
+  .view-btn.active { background: #ff9800; }
+
+  #status { text-align: center; padding: 6px; font-size: 12px; color: #aaa; }
+  #status.error { color: #ff5555; }
+  #status.success { color: #4ade80; }
+
+  #channels {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px; padding: 10px;
+  }
+  @media (max-width: 600px) and (orientation: portrait) { #channels { grid-template-columns: repeat(3, 1fr); } }
+  @media (orientation: landscape) and (min-width: 900px) { #channels { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+  @media (min-width: 1400px) { #channels { grid-template-columns: repeat(6, 1fr); } }
+
+  .channel {
+    background: #1a1a22; border-radius: 12px; border: 1px solid #2a2a35;
+    cursor: pointer; transition: transform 0.15s, background 0.2s;
+    aspect-ratio: 1 / 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; overflow: hidden; padding: 6px;
+  }
+  .channel:hover { background: #22222e; transform: translateY(-2px); }
+  .channel:active { transform: scale(0.96); }
+  .channel img {
+    width: 100%; height: 100%; max-height: 82%;
+    object-fit: contain; background: #fff; border-radius: 8px; padding: 6px;
+  }
+  .channel .name {
+    font-size: 10px; font-weight: 500; text-align: center; margin-top: 4px;
+    overflow: hidden; text-overflow: ellipsis;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+    line-height: 1.1; width: 100%; color: #ccc;
+  }
+
+  #timeline { display: none; flex-direction: column; gap: 8px; padding: 10px; }
+  body.list-view #channels { display: none; }
+  body.list-view #timeline { display: flex; }
+
+  .timeline-row {
+    background: #1a1a22; border-radius: 12px; border: 1px solid #2a2a35;
+    display: flex; align-items: center; padding: 12px 16px; gap: 16px;
+    cursor: pointer; transition: background 0.15s; min-height: 100px;
+  }
+  .timeline-row:hover { background: #22222e; }
+  .timeline-logo {
+    width: 120px; height: 80px; object-fit: contain;
+    background: #fff; border-radius: 8px; padding: 5px; flex-shrink: 0;
+  }
+  .timeline-info { flex: 1; min-width: 0; }
+  .timeline-channel-name {
+    font-size: 18px; font-weight: 700; color: #fff;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .timeline-group {
+    font-size: 12px; color: #666; margin-top: 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  .bottom-bar { display: flex; justify-content: center; padding: 20px 0 30px; }
+  button.action {
+    padding: 14px 32px; border-radius: 12px; border: none;
+    background: #4a7dff; color: #fff; font-size: 15px;
+    font-weight: 600; cursor: pointer;
+  }
+  button.action:hover { background: #3a6bef; }
+  button.action:disabled { background: #333; cursor: not-allowed; }
+
+  .modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.95); z-index: 2000;
+    flex-direction: column;
+    padding-bottom: env(safe-area-inset-bottom, 50px);
+  }
+  .modal.visible { display: flex; }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; background: #111;
+    border-bottom: 1px solid #222; flex-wrap: wrap; gap: 8px;
+    min-height: 50px;
+    flex-shrink: 0;
+  }
+  .modal-header .modal-title { font-size: 15px; font-weight: 700; }
+  .modal-header .header-actions { display: flex; gap: 8px; align-items: center; }
+  .btn-calibra {
+    background: #ff9800; border: none; color: #fff;
+    padding: 8px 16px; border-radius: 10px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .btn-calibra:hover { background: #e68900; }
+  .btn-calibra.active { background: #2a5acf; }
+  .close-modal {
+    background: #2a2a35; border: none; color: #fff;
+    width: 36px; height: 36px; border-radius: 10px;
+    font-size: 18px; cursor: pointer;
+  }
+  .modal-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+
+  .cockpit {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 12px;
+    background: #0a0a10;
+    border-bottom: 1px solid #222;
+  }
+  @media (max-width: 900px) {
+    .cockpit { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 500px) {
+    .cockpit { grid-template-columns: 1fr; }
+  }
+
+  .instrument {
+    background: #111;
+    border: 2px solid #2a2a35;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(74,125,255,0.1);
+    max-width: 260px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .instrument canvas {
+    width: 100%; height: 100%;
+    display: block;
+  }
+  .instrument-label {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #4a7dff;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .instrument-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .instrument.gforce {
+    border-radius: 16px;
+  }
+
+  .telem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    padding: 14px;
+  }
+  .telem-card {
+    background: #1a1a22;
+    border: 1px solid #2a2a35;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .telem-card .telem-icon { font-size: 28px; margin-bottom: 6px; }
+  .telem-card .telem-value {
+    font-size: 26px; font-weight: 800; line-height: 1;
+    color: #4a7dff;
+  }
+  .telem-card .telem-unit { font-size: 13px; color: #888; margin-left: 3px; }
+  .telem-card .telem-label {
+    font-size: 11px; color: #888; margin-top: 5px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  #playerOverlay {
+    display: none; position: fixed; inset: 0;
+    background: #000; z-index: 1000; flex-direction: column;
+    padding-bottom: env(safe-area-inset-bottom, 40px);
+  }
+  #playerOverlay.visible { display: flex; }
+  .player-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px; background: #111;
+    border-bottom: 1px solid #222; min-height: 76px; flex-shrink: 0;
+  }
+  .player-header .info { flex: 1; min-width: 0; }
+  .player-header .title {
+    font-size: 20px; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .player-header .group { font-size: 13px; color: #888; margin-top: 3px; }
+  .hdr-btn {
+    background: #2a2a35; border: none; color: #fff;
+    width: 54px; height: 54px; border-radius: 14px;
+    font-size: 24px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .hdr-btn:hover { background: #3a3a48; }
+  .close-btn { font-size: 28px; }
+
+  .player-body { flex: 1; display: flex; min-height: 0; position: relative; }
+  .video-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: #000; position: relative; }
+  video { width: 100%; height: 100%; background: #000; object-fit: contain; }
+
+  #channelMenu {
+    width: 400px; background: #111; border-left: 1px solid #222;
+    display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform 0.25s ease;
+    position: absolute; right: 0; top: 0; bottom: 0; z-index: 30;
+  }
+  #channelMenu.visible { transform: translateX(0); }
+  .menu-header {
+    padding: 12px 14px; border-bottom: 1px solid #222;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .menu-header .menu-title { font-size: 14px; font-weight: 700; }
+  .close-menu {
+    background: #2a2a35; border: none; color: #fff;
+    width: 32px; height: 32px; border-radius: 8px;
+    font-size: 16px; cursor: pointer;
+  }
+  .menu-list { flex: 1; overflow-y: auto; padding: 6px; }
+  .menu-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px; border-radius: 8px; cursor: pointer;
+    transition: background 0.15s; border: 1px solid transparent;
+  }
+  .menu-item:hover { background: #1f1f2b; }
+  .menu-item.active { background: #1a2340; border-color: #4a7dff; }
+  .menu-item img {
+    width: 56px; height: 42px; object-fit: contain;
+    background: #fff; border-radius: 5px; padding: 3px; flex-shrink: 0;
+  }
+  .menu-info { flex: 1; min-width: 0; }
+  .menu-name {
+    font-size: 13px; font-weight: 600; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .menu-item.active .menu-name { color: #4a7dff; }
+
+  .menu-list::-webkit-scrollbar { width: 6px; }
+  .menu-list::-webkit-scrollbar-thumb { background: #2a2a35; border-radius: 3px; }
+
+  @media (max-width: 700px) { #channelMenu { width: 280px; } }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="title">📺 IPTV</div>
+  <button class="icon-btn" id="telemBtn">📊 Telemetria</button>
+  <button class="view-btn" id="viewBtn">📋 Lista</button>
+</div>
+
+<div id="status"></div>
+<div id="channels"></div>
+<div id="timeline"></div>
+
+<div class="bottom-bar">
+  <button class="action" id="refreshBtn">🔄 Aggiorna</button>
+</div>
+
+<div class="modal" id="telemOverlay">
+  <div class="modal-header">
+    <div class="modal-title">✈️ Cockpit</div>
+    <div class="header-actions">
+      <button class="btn-calibra" id="calibraBtn">🎯 Azzera</button>
+      <button class="close-modal" id="closeTelemBtn">✕</button>
+    </div>
+  </div>
+  <div class="modal-body">
+
+    <div class="cockpit">
+      <div class="instrument-wrap">
+        <div class="instrument">
+          <canvas id="horizonCanvas" width="300" height="300"></canvas>
+        </div>
+        <div class="instrument-label">Orizzonte</div>
+      </div>
+
+      <div class="instrument-wrap">
+        <div class="instrument">
+          <canvas id="compassCanvas" width="300" height="300"></canvas>
+        </div>
+        <div class="instrument-label">Bussola</div>
+      </div>
+
+      <div class="instrument-wrap">
+        <div class="instrument">
+          <canvas id="altimeterCanvas" width="300" height="300"></canvas>
+        </div>
+        <div class="instrument-label">Altimetro</div>
+      </div>
+
+      <div class="instrument-wrap">
+        <div class="instrument gforce">
+          <canvas id="gforceCanvas" width="300" height="300"></canvas>
+        </div>
+        <div class="instrument-label">Forza G</div>
+      </div>
+    </div>
+
+    <div class="telem-grid">
+      <div class="telem-card">
+        <div class="telem-icon">✈️</div>
+        <div class="telem-value" id="tPitchRoll" style="font-size:20px">0° / 0°</div>
+        <div class="telem-label">Pitch / Roll</div>
+      </div>
+      <div class="telem-card">
+        <div class="telem-icon">🧭</div>
+        <div class="telem-value" id="tHeading2">--<span class="telem-unit">°</span></div>
+        <div class="telem-label">Rotta</div>
+      </div>
+      <div class="telem-card">
+        <div class="telem-icon">💥</div>
+        <div class="telem-value" id="tGForce" style="font-size:20px">0.00<span class="telem-unit">g</span></div>
+        <div class="telem-label">Forza G Totale</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="playerOverlay">
+  <div class="player-header">
+    <div class="info">
+      <div class="title" id="playerTitle">Canale</div>
+      <div class="group" id="playerGroup"></div>
+    </div>
+    <button class="hdr-btn" id="menuToggleBtn">☰</button>
+    <button class="hdr-btn close-btn" id="closePlayerBtn">✕</button>
+  </div>
+  <div class="player-body">
+    <div class="video-wrap">
+      <video id="videoEl" controls playsinline autoplay></video>
+    </div>
+    <div id="channelMenu">
+      <div class="menu-header">
+        <div class="menu-title">📺 Canali</div>
+        <button class="close-menu" id="closeMenuBtn">✕</button>
+      </div>
+      <div class="menu-list" id="menuList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ CONFIG ============
+const PLAYLIST_URL = 'https://raw.githubusercontent.com/riddik14/iptv/main/playlist_italy.m3u';
+const STORAGE_KEY = 'iptv_playlist_v15';
+const VIEW_KEY = 'iptv_view_mode';
+const CALIB_KEY = 'iptv_calibration';
+
+// ============ DOM ============
+const $ = id => document.getElementById(id);
+const statusEl = $('status'), channelsEl = $('channels'), timelineEl = $('timeline');
+const refreshBtn = $('refreshBtn'), viewBtn = $('viewBtn');
+const playerOverlay = $('playerOverlay'), videoEl = $('videoEl');
+const playerTitle = $('playerTitle'), playerGroup = $('playerGroup');
+const closePlayerBtn = $('closePlayerBtn'), menuToggleBtn = $('menuToggleBtn');
+const channelMenu = $('channelMenu'), closeMenuBtn = $('closeMenuBtn'), menuList = $('menuList');
+const telemBtn = $('telemBtn'), telemOverlay = $('telemOverlay'), closeTelemBtn = $('closeTelemBtn');
+const calibraBtn = $('calibraBtn');
+
+const tPitchRoll = $('tPitchRoll'), tHeading2 = $('tHeading2');
+const tGForce = $('tGForce');
+
+const horizonCanvas = $('horizonCanvas');
+const compassCanvas = $('compassCanvas');
+const altimeterCanvas = $('altimeterCanvas');
+const gforceCanvas = $('gforceCanvas');
+
+// ============ STATO ============
+let allChannels = [], hls = null, currentChannel = null;
+let viewMode = localStorage.getItem(VIEW_KEY) || 'grid';
+let currentHeading = null;
+let currentBeta = null, currentGamma = null;
+
+let calibOffsetBeta = 0, calibOffsetGamma = 0;
+
+// Altimetro senza GPS: usa accelerometro per stima (non disponibile) -> mostra NO GPS
+// Lasciamo la funzione ma senza dati mostrerà "NO GPS"
+let currentAltitude = null;
+let currentClimbRate = 0;
+
+let gforceX = 0, gforceY = 0, gforceZ = 0;
+let gravityRef = { x: 0, y: 0, z: 9.81 };
+
+try {
+  const cal = JSON.parse(localStorage.getItem(CALIB_KEY) || 'null');
+  if (cal) {
+    calibOffsetBeta = cal.beta || 0;
+    calibOffsetGamma = cal.gamma || 0;
+  }
+} catch {}
+
+// ============ UTILITÀ ============
+const placeholder = () => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="60">' +
+  '<rect width="80" height="60" fill="#ddd"/>' +
+  '<text x="50%" y="60%" font-size="24" text-anchor="middle" fill="#999">📺</text></svg>');
+
+function makeImg(src, alt, cls) {
+  const img = document.createElement('img');
+  if (cls) img.className = cls;
+  img.loading = 'lazy'; img.alt = alt;
+  img.src = src || placeholder();
+  img.onerror = () => { img.onerror = null; img.src = placeholder(); };
+  return img;
+}
+
+// ============ AGGIORNA STRUMENTI ============
+function updateAllInstruments() {
+  if (currentBeta == null || currentGamma == null) return;
+  const rawBeta = currentBeta;
+  const rawGamma = currentGamma;
+  const pitch = Math.max(-90, Math.min(90, rawBeta - calibOffsetBeta));
+  const roll = Math.max(-90, Math.min(90, rawGamma - calibOffsetGamma));
+
+  tPitchRoll.textContent = pitch.toFixed(0) + '° / ' + roll.toFixed(0) + '°';
+
+  drawHorizon(pitch, roll);
+}
+
+// ============ ORIZZONTE ============
+function drawHorizon(pitch, roll) {
+  const ctx = horizonCanvas.getContext('2d');
+  const size = horizonCanvas.width;
+  const cx = size / 2, cy = size / 2, r = size / 2 - 8;
+  ctx.clearRect(0, 0, size, size);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.clip();
+
+  const skyGrad = ctx.createLinearGradient(0, cy - r, 0, cy);
+  skyGrad.addColorStop(0, '#0a4a8a');
+  skyGrad.addColorStop(1, '#4a90e2');
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.translate(cx, cy);
+  ctx.rotate(-roll * Math.PI / 180);
+
+  const pitchOffset = pitch * 3;
+
+  const skyGrad2 = ctx.createLinearGradient(0, -r * 2 - pitchOffset, 0, -pitchOffset);
+  skyGrad2.addColorStop(0, '#0a4a8a');
+  skyGrad2.addColorStop(1, '#4a90e2');
+  ctx.fillStyle = skyGrad2;
+  ctx.fillRect(-r * 2, -r * 2 - pitchOffset, r * 4, r * 2);
+
+  const earthGrad = ctx.createLinearGradient(0, -pitchOffset, 0, r * 2 - pitchOffset);
+  earthGrad.addColorStop(0, '#6b4423');
+  earthGrad.addColorStop(1, '#3a2412');
+  ctx.fillStyle = earthGrad;
+  ctx.fillRect(-r * 2, -pitchOffset, r * 4, r * 2);
+
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(-r * 2, -pitchOffset);
+  ctx.lineTo(r * 2, -pitchOffset);
+  ctx.stroke();
+
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let deg = -90; deg <= 90; deg += 5) {
+    if (deg === 0) continue;
+    const y = -pitchOffset - deg * 3;
+    const major = (deg % 10 === 0);
+    const len = major ? 25 : 12;
+    ctx.beginPath();
+    ctx.moveTo(-len, y);
+    ctx.lineTo(len, y);
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = major ? 2 : 1;
+    ctx.stroke();
+    if (major) {
+      ctx.fillText(Math.abs(deg), -len - 14, y);
+      ctx.fillText(Math.abs(deg), len + 14, y);
+    }
+  }
+
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#2a2a35';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  for (let angle = -60; angle <= 60; angle += 15) {
+    const rad = (angle - 90) * Math.PI / 180;
+    const inner = r - 15;
+    const outer = r - 5;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(rad) * inner, Math.sin(rad) * inner);
+    ctx.lineTo(Math.cos(rad) * outer, Math.sin(rad) * outer);
+    ctx.strokeStyle = angle === 0 ? '#ffcc00' : '#666';
+    ctx.lineWidth = angle === 0 ? 3 : 2;
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-roll * Math.PI / 180);
+  ctx.beginPath();
+  ctx.moveTo(0, -(r - 20));
+  ctx.lineTo(-8, -(r - 32));
+  ctx.lineTo(8, -(r - 32));
+  ctx.closePath();
+  ctx.fillStyle = '#ffcc00';
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.strokeStyle = '#ffcc00';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.5, 0); ctx.lineTo(-r * 0.15, 0);
+  ctx.moveTo(r * 0.15, 0); ctx.lineTo(r * 0.5, 0);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(0, 0, 4, 0, 2 * Math.PI);
+  ctx.fillStyle = '#ffcc00';
+  ctx.fill();
+  ctx.restore();
+}
+
+// ============ BUSSOLA ============
+function drawCompassAero(heading) {
+  const ctx = compassCanvas.getContext('2d');
+  const size = compassCanvas.width;
+  const cx = size / 2, cy = size / 2, r = size / 2 - 8;
+  ctx.clearRect(0, 0, size, size);
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.fillStyle = '#0a0a10';
+  ctx.fill();
+  ctx.strokeStyle = '#2a2a35';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-heading * Math.PI / 180);
+
+  ctx.beginPath();
+  ctx.arc(0, 0, r * 0.85, 0, 2 * Math.PI);
+  ctx.strokeStyle = 'rgba(74,125,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  for (let deg = 0; deg < 360; deg += 5) {
+    const rad = (deg - 90) * Math.PI / 180;
+    let len, color, width;
+    if (deg % 30 === 0) { len = r * 0.18; color = '#fff'; width = 3; }
+    else if (deg % 10 === 0) { len = r * 0.12; color = '#aaa'; width = 2; }
+    else { len = r * 0.06; color = '#555'; width = 1; }
+    const x1 = Math.cos(rad) * (r - 5);
+    const y1 = Math.sin(rad) * (r - 5);
+    const x2 = Math.cos(rad) * (r - 5 - len);
+    const y2 = Math.sin(rad) * (r - 5 - len);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.stroke();
+  }
+
+  ctx.font = 'bold 22px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const labels = { 0: 'N', 90: 'E', 180: 'S', 270: 'W' };
+  for (const [deg, txt] of Object.entries(labels)) {
+    const rad = (parseInt(deg) - 90) * Math.PI / 180;
+    const x = Math.cos(rad) * (r - 40);
+    const y = Math.sin(rad) * (r - 40);
+    ctx.fillStyle = deg === '0' ? '#ff5555' : '#fff';
+    ctx.font = 'bold 26px sans-serif';
+    ctx.fillText(txt, x, y);
+  }
+
+  ctx.font = 'bold 12px sans-serif';
+  for (let deg = 30; deg < 360; deg += 30) {
+    if (labels[deg]) continue;
+    const rad = (deg - 90) * Math.PI / 180;
+    const x = Math.cos(rad) * (r - 30);
+    const y = Math.sin(rad) * (r - 30);
+    ctx.fillStyle = '#888';
+    ctx.fillText(deg, x, y);
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.beginPath();
+  ctx.moveTo(0, -r * 0.7);
+  ctx.lineTo(-12, -r * 0.45);
+  ctx.lineTo(0, -r * 0.55);
+  ctx.lineTo(12, -r * 0.45);
+  ctx.closePath();
+  ctx.fillStyle = '#ffcc00';
+  ctx.fill();
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(cx, cy + 30);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 26px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const headingDeg = ((Math.round(heading) % 360) + 360) % 360;
+  ctx.fillText(String(headingDeg).padStart(3, '0') + '°', 0, 0);
+  ctx.restore();
+}
+
+// ============ ALTIMETRO (senza GPS mostra NO GPS) ============
+function drawAltimeter(altitude, climbRate) {
+  const ctx = altimeterCanvas.getContext('2d');
+  const size = altimeterCanvas.width;
+  const cx = size / 2, cy = size / 2, r = size / 2 - 8;
+  ctx.clearRect(0, 0, size, size);
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+  ctx.fillStyle = '#0a0a10';
+  ctx.fill();
+  ctx.strokeStyle = '#2a2a35';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  if (altitude == null) {
+    ctx.fillStyle = '#666';
+    ctx.font = 'bold 20px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('NO GPS', cx, cy);
+    return;
+  }
+}
+
+// ============ G-FORCE ============
+function lowPass(prev, curr, alpha = 0.9) {
+  return prev * alpha + curr * (1 - alpha);
+}
+
+function updateGForce(ax, ay, az) {
+  gravityRef.x = lowPass(gravityRef.x, ax, 0.95);
+  gravityRef.y = lowPass(gravityRef.y, ay, 0.95);
+  gravityRef.z = lowPass(gravityRef.z, az, 0.95);
+
+  const linX = (ax - gravityRef.x) / 9.81;
+  const linY = (ay - gravityRef.y) / 9.81;
+  const linZ = (az - gravityRef.z) / 9.81;
+
+  gforceX = linX;
+  gforceY = linY;
+  gforceZ = linZ;
+
+  const totalG = Math.sqrt(linX * linX + linY * linY + linZ * linZ);
+
+  tGForce.innerHTML = totalG.toFixed(2) + '<span class="telem-unit">g</span>';
+
+  drawGForce(linX, linY, linZ, totalG);
+}
+
+function drawGForce(gx, gy, gz, totalG) {
+  const ctx = gforceCanvas.getContext('2d');
+  const size = gforceCanvas.width;
+  const cx = size / 2, cy = size / 2, r = size / 2 - 8;
+  ctx.clearRect
